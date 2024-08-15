@@ -24,7 +24,7 @@ export default function Home() {
   } = useGetMarketsQuery({
     status: MarketStatus.LIVE,
     page: String(page),
-    count: "4",
+    count: "10",
   })
   const { data: marketStats, isLoading: marketStatsLoading } =
     useGetStatsQuery()

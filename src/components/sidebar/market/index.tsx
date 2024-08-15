@@ -14,10 +14,9 @@ import Button from "@/components/button"
 import Moment from "react-moment"
 import { Outcome } from "@/types"
 import { successToast } from "@/components/toast"
-import { FaLayerGroup } from "react-icons/fa"
 import Image from "next/image"
 import { MarketStatus } from "@/types/generic"
-import FundsModal from "@/components/modal/funds/deposit"
+import { getUser } from "@/utils/token"
 
 interface IMarketSidebarType {
   isSidebarOpen: boolean
@@ -37,8 +36,7 @@ const MarketSidebar = ({
     register,
     handleSubmit,
     control,
-    watch,
-    setValue,
+
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -61,11 +59,11 @@ const MarketSidebar = ({
     }
   }
   const status = marketData?.data.status
-  // const status = MarketStatus.RESOLVED
-  const { selectedAccount, isInitialized } = usePolkadot()
+  const user = getUser()
+  const { selectedAccount, isInitialized, isConnected } = usePolkadot()
 
   return (
-    <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
+    <Sidebar title="" isOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
       <h1 className="text-md font-semibold">{marketData?.data.title}</h1>
       <p className="text-xs font-normal pt-1 text-gray-300">
         Market {status === "LIVE" ? "closes" : "closed"}{" "}
@@ -136,16 +134,14 @@ const MarketSidebar = ({
                   />
                 </div>
                 <div className="mt-4">
-                  {!isInitialized && !selectedAccount && (
-                    <small className="text-xs text-[#d72c0d] !font-normal">
-                      Please connect your wallet to place a bet
-                    </small>
-                  )}
                   <Button
                     type="submit"
                     variant="primary"
                     isLoading={isBetting}
-                    disabled={!isInitialized && !selectedAccount}
+                    disabled={
+                      isInitialized &&
+                      (selectedAccount?.address === "" || !isConnected)
+                    }
                   >
                     Place Bet
                   </Button>

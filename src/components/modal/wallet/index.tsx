@@ -7,6 +7,7 @@ import { AiFillCheckCircle } from "react-icons/ai"
 import { BiCheckCircle } from "react-icons/bi"
 import { Wallet } from "@subwallet/wallet-connect/types"
 import { useMobileDetect } from "@/hooks/useMobileDetect"
+import Image from "next/image"
 
 const WalletModal = ({
   open,
@@ -32,7 +33,46 @@ const WalletModal = ({
   const [selectedAccount, setSelectedAccount] =
     useState<InjectedAccountWithMeta>()
   const isMobile = useMobileDetect()
-
+  const [menuType, setMenuType] = useState("wallet")
+  const handleWalletSelection = async (wallet: Wallet) => {
+    if (!wallet.installed) return
+    setWallets([])
+    wallet
+      .enable()
+      .then(() => {
+        setSelectExtension(wallet)
+        wallet
+          .getAccounts()
+          .then((accounts) => {
+            accounts &&
+              setWallets(
+                accounts.map((account) => ({
+                  address: account.address,
+                  meta: {
+                    name: account.name,
+                    source: wallet.title,
+                    genesisHash: "",
+                  },
+                  type: "sr25519",
+                })),
+              )
+          })
+          .catch(console.error)
+      })
+      .catch(console.error)
+  }
+  const filteredExtensions =
+    extensions?.length > 0
+      ? extensions
+          .sort((a, b) => {
+            if (a.installed && !b.installed) return -1
+            if (!a.installed && b.installed) return 1
+            return 0
+          })
+          .filter((each) => {
+            return !isMobile ? each.title !== "Nova Wallet" : true
+          })
+      : []
   return (
     <Modal
       classNames={{
@@ -44,9 +84,48 @@ const WalletModal = ({
       center
     >
       <h2 className="text-lg font-semibold">Please select your wallet</h2>
-      <hr className="my-3" />
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex flex-col gap-y-4 max-h-[280px] overflow-y-auto no-scrollbar">
+      <hr className="my-3 -mx-4" />
+      <div className="flex items-center justify-between mt-1">
+        {filteredExtensions.map((wallet) => (
+          <div key={wallet.title} className="w-full">
+            <button
+              type="button"
+              className={`flex flex-col items-center disabled:cursor-not-allowed hover:bg-info/60 p-2 rounded-lg ${
+                extensionSelected?.title === wallet.title
+                  ? "bg-gray-600"
+                  : "bg-info/60"
+              } cursor-pointer shadow-md`}
+              onClick={() => handleWalletSelection(wallet)}
+              disabled={!wallet.installed}
+            >
+              <div className="relative h-12 w-12">
+                <Image
+                  src={(wallet.logo.src as any)?.src ?? ""}
+                  alt={wallet.logo.alt}
+                  fill
+                />
+              </div>
+              <h4 className="text-sm text-gray-300 mt-1">{wallet.title}</h4>
+              {/* <div className="flex justify-between flex-grow">
+                    {!wallet.installed && (
+                      <div>
+                        <a
+                          className="block text-purple-400"
+                          href={wallet.installUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Install
+                        </a>
+                      </div>
+                    )}
+                  </div> */}
+            </button>
+          </div>
+        ))}
+      </div>
+      {/* <div className="flex flex-col md:flex-row gap-4"> */}
+      {/* <div className="flex flex-col gap-y-4 max-h-[280px] overflow-y-auto no-scrollbar">
           {extensions?.length > 0 &&
             extensions
               .sort((a, b) => {
@@ -119,9 +198,9 @@ const WalletModal = ({
                   </button>
                 </div>
               ))}
-        </div>
-
-        <div className="flex flex-col gap-y-4 max-h-[280px] overflow-y-auto no-scrollbar">
+        </div> */}
+      {menuType === "account" && (
+        <div className="flex flex-col gap-y-4 max-h-[280px] overflow-y-auto no-scrollbar mt-3">
           {wallets.length === 0 && (
             <div className="text-center">No Account found</div>
           )}
@@ -130,9 +209,9 @@ const WalletModal = ({
             <button
               type="button"
               key={item.address}
-              className={`border-[1px] text-sm rounded-xl ${
-                selectedAccount === item ? "bg-green-50" : ""
-              } p-4 px-3 cursor-pointer shadow-md flex items-center gap-x-3`}
+              className={`border-[1px] text-sm rounded-md ${
+                selectedAccount === item ? "bg-primary" : ""
+              } py-1 px-3 cursor-pointer shadow-md flex items-center gap-x-3`}
               onClick={() => setSelectedAccount(item)}
             >
               <BiCheckCircle
@@ -143,7 +222,7 @@ const WalletModal = ({
               />
               <div
                 className={`text-start ${
-                  selectedAccount === item ? "text-primary" : ""
+                  selectedAccount === item ? "text-white" : ""
                 }`}
               >
                 <p className={`font-semibold`}>{item.meta.name}</p>
@@ -152,7 +231,8 @@ const WalletModal = ({
             </button>
           ))}
         </div>
-      </div>
+      )}
+      {/* </div> */}
       {(isConnected || wallets.length > 0) && (
         <div className="mt-4">
           <button
