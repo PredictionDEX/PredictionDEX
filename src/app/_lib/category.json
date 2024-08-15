@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "name": "E-Sports",
+        "label": "E-Sports",
+        "value": "E-Sports",
+        "image": "/category/esports.png"
+    },
+    {
+        "id": 2,
+        "name": "Crypto",
+        "label": "Crypto",
+        "value": "Crypto",
+        "image": "/category/crypto.png"
+    },
+    {
+        "id": 3,
+        "name": "Election",
+        "label": "Election",
+        "value": "Election",
+        "image": "/category/election.png"
+    }
+]
