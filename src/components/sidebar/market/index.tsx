@@ -17,7 +17,7 @@ import { successToast } from "@/components/toast"
 import { FaLayerGroup } from "react-icons/fa"
 import Image from "next/image"
 import { MarketStatus } from "@/types/generic"
-import FundsModal from "@/components/modal/funds"
+import FundsModal from "@/components/modal/funds/deposit"
 
 interface IMarketSidebarType {
   isSidebarOpen: boolean

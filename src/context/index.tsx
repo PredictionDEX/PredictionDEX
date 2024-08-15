@@ -333,10 +333,12 @@ export const PolkadotProvider: React.FC<PolkadotProviderProps> = ({
       return
     }
     const tx = api.tx.balances.transferKeepAlive(to, amt)
+
     const unsub = await tx.signAndSend(
       selectedAccount.address,
       { signer: extensionSelected.signer as any },
       async (result: any) => {
+        console.log(result.txHash.toHex())
         const { status } = result
         if (status.isInBlock) {
           console.log(

@@ -217,8 +217,8 @@ export interface PaginatedApiResponse<T> {
   pagination: {
     count: number
     current: number
-    next: number
-    prev: number
+    next: number | null
+    prev: number | null
     total: number
     total_pages: number
   }

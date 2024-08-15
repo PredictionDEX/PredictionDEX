@@ -17,11 +17,11 @@ const Button = ({
   const getButtonStyle = () => {
     switch (variant) {
       case "primary":
-        return "bg-primary text-white disabled:bg-gray-700"
+        return "bg-primary text-white"
       case "secondary":
         return "bg-secondary disabled:bg-gray-700"
       case "outlined":
-        return "bg-transparent border border-primary disabled:bg-gray-700"
+        return "bg-transparent border border-primary"
       default:
         return "bg-primary"
     }
@@ -29,7 +29,7 @@ const Button = ({
   return (
     <button
       type={type}
-      className={`${getButtonStyle()} px-3 py-2 rounded-lg text-sm font-semibold w-full focus:outline-none flex justify-center items-center gap-x-2 disabled:bg-gray-700`}
+      className={`${getButtonStyle()} px-3 py-2 rounded-lg text-sm font-semibold w-full focus:outline-none flex justify-center items-center gap-x-2 disabled:!bg-gray-700`}
       disabled={props.disabled || isLoading}
       {...props}
     >

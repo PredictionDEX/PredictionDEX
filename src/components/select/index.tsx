@@ -62,9 +62,10 @@ export function SelectComponent<T extends FieldValues>({
       fontSize: "14px",
       lineHeight: "24px",
       fontWeight: 500,
+
       borderRadius: 8,
       color: `${disabled ? "#bdc1cc" : "white"} !important`,
-      padding: "0px",
+      padding: "4px",
       textAlign: "left",
       boxShadow: `${errorMessage ? "" : "none !important"}`,
 
@@ -84,7 +85,7 @@ export function SelectComponent<T extends FieldValues>({
       width: "100%",
       background: "#20334B",
       position: "relative",
-      zIndex: "999999999",
+      zIndex: "5",
       color: "white !important",
     }),
   }
@@ -96,7 +97,7 @@ export function SelectComponent<T extends FieldValues>({
           label != undefined && label.length > 0 ? "space-y-1.5" : ""
         }`}
       >
-        {label && <label className="text-sm text-gray-200">{label}</label>}
+        {label && <label className="text-sm text-gray-400">{label}</label>}
 
         <Controller
           control={control}

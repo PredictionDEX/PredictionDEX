@@ -43,7 +43,7 @@ export function InputComponent<T extends FieldValues>({
   return (
     <div>
       <div className={label !== undefined ? "space-y-1" : ""}>
-        {label && <label className="text-sm text-gray-200">{label}</label>}
+        {label && <label className="text-sm text-gray-400">{label}</label>}
         <div className="relative text-sm">
           <input
             placeholder={placeholder}
@@ -51,7 +51,7 @@ export function InputComponent<T extends FieldValues>({
             accept={accept}
             autoComplete="off"
             defaultValue={defaultVal}
-            className={`w-full rounded-lg py-2 text-sm px-2 !bg-transparent shadow-none ring-1 ring-gray-500 text-md text-white focus:outline-none focus:bg-transparent 
+            className={`w-full rounded-md py-[10px] text-sm px-3 !bg-transparent shadow-none ring-1 ring-gray-500 text-md text-white focus:outline-none focus:bg-transparent 
               ${classes} 
               ${errorMessage ? "!ring-[#d72c0d]" : ""}
            `}

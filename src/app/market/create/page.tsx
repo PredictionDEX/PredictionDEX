@@ -35,7 +35,7 @@ const CreateMarket = () => {
       },
       title: "",
       resolution_date: "",
-      outcomes: new Array(3).fill(""),
+      outcomes: ["Outcome 1", "Outcome 2", ""],
       image: "",
     },
   })
@@ -57,6 +57,7 @@ const CreateMarket = () => {
       console.log(response)
       setIsCreating(false)
       successToast("Market created successfully")
+      router.push("/")
     } catch (e) {
       setIsCreating(false)
       console.log(e)
@@ -167,22 +168,24 @@ const CreateMarket = () => {
             category={watch("type")?.value}
             time={watch("resolution_date")}
             outcomes={
-              watch("outcomes")?.map(
-                (outcome: any, key: any) =>
-                  ({
-                    id: key,
-                    market_id: 0,
-                    label: outcome,
-                    total_amount: 0,
-                    created_at: "",
-                    updated_at: "",
-                    predictions: [],
-                    self_prediction: {
-                      data: [],
+              watch("outcomes")
+                ?.filter((oc) => oc !== "")
+                .map(
+                  (outcome: any, key: any) =>
+                    ({
+                      id: key,
+                      market_id: 0,
+                      label: outcome,
                       total_amount: 0,
-                    },
-                  } as Outcome),
-              ) || []
+                      created_at: "",
+                      updated_at: "",
+                      predictions: [],
+                      self_prediction: {
+                        data: [],
+                        total_amount: 0,
+                      },
+                    } as Outcome),
+                ) || []
             }
             image={
               watch("image") != "" && watch("image") != undefined
@@ -192,6 +195,7 @@ const CreateMarket = () => {
             status={MarketStatus.LIVE}
             totalVolume={0}
             isFullWidth
+            isPreview
           />
         </div>
       </div>

@@ -58,7 +58,7 @@ export function DatePickerComponent<T extends FieldValues>({
           label !== undefined ? "space-y-1 justify-between" : ""
         } w-full`}
       >
-        {label && <label className="text-sm text-gray-200">{label}</label>}
+        {label && <label className="text-sm text-gray-400">{label}</label>}
 
         <Controller
           control={control}
@@ -75,11 +75,12 @@ export function DatePickerComponent<T extends FieldValues>({
                 minDate={minDate}
                 startDate={startDate}
                 filterTime={filterPassedTime}
+                timeIntervals={10}
                 selectsStart={selectsStart}
                 endDate={endDate}
                 calendarContainer={calendarContainer}
                 selected={field.value}
-                className={` px-2 !bg-transparent shadow-none ring-1 ring-gray-500 text-md w-full !pl-7 !py-[6px] rounded-lg pr-3 text-sm leading-[25px] font-medium focus:outline-none ${
+                className={` px-2 !bg-transparent shadow-none ring-1 ring-gray-500 text-md w-full !pl-7 !py-[10px] rounded-lg pr-3 text-sm leading-[25px] font-medium focus:outline-none ${
                   errorMessage ? "ring-red-500 !shadow-none" : "border-gray-300"
                 }
             `}

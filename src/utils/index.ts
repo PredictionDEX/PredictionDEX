@@ -14,3 +14,12 @@ export function truncateWalletAddress(
   // If the address is not long enough to truncate, return it as is
   return address
 }
+
+export function formatTokenAmount(amount?: number, decimal = 9): number {
+  if (amount === undefined) {
+    return 0
+  }
+  return Number(
+    (parseFloat(amount.toString()) / Math.pow(10, decimal)).toFixed(2),
+  )
+}

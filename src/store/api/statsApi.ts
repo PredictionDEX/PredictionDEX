@@ -9,6 +9,7 @@ import {
   PaginatedApiResponse,
   User,
 } from "@/types"
+import { MarketStatus } from "@/types/generic"
 export const statsApi = createApi({
   reducerPath: "statsApi",
   baseQuery: apiWrapper,
@@ -99,19 +100,63 @@ export const statsApi = createApi({
         return err.data
       },
     }),
-    getMarkets: builder.query<PaginatedApiResponse<Market>, void>({
-      query: () => {
+    getMarkets: builder.query<
+      PaginatedApiResponse<Market>,
+      {
+        status: MarketStatus
+        page?: string
+        count?: string
+        type?: string
+      }
+    >({
+      query: ({ status, page, count, type }) => {
+        let url = `market?status=${status}`
+        if (page) {
+          url += `&page=${page}`
+        }
+        if (count) {
+          url += `&count=${count}`
+        }
+        if (type && type !== "all") {
+          url += `&type=${type}`
+        }
+
         return {
           method: "GET",
-          url: "market",
+          url: url,
         }
       },
+      providesTags: (result, error, { status, type }) => [
+        { type: "MarketList", status },
+        { type: "MarketList", status: type },
+      ],
+
       transformResponse: (response: PaginatedApiResponse<Market>) => {
         return response
       },
       transformErrorResponse: (err) => {
-        console.log("FROM HERE ERROR", err)
+        console.error("Error fetching markets:", err)
         return err.data
+      },
+      merge: (currentCache, newItems) => {
+        if (newItems && newItems.data) {
+          const existingIds = new Set(currentCache.data.map((item) => item.id))
+          const newUniqueItems = newItems.data.filter(
+            (item) => !existingIds.has(item.id),
+          )
+          currentCache.pagination = newItems.pagination
+          currentCache.data.push(...newUniqueItems)
+        }
+      },
+      serializeQueryArgs: ({ endpointName, queryArgs }) => {
+        return `${endpointName}-${queryArgs.status}`
+      },
+      keepUnusedDataFor: 0,
+      forceRefetch({ currentArg, previousArg }) {
+        return (
+          currentArg?.page !== previousArg?.page ||
+          currentArg?.count !== previousArg?.count
+        )
       },
     }),
     getMarketById: builder.query<ApiResponse<Market>, number>({
@@ -198,6 +243,7 @@ export const {
   useGetMyDetailsQuery,
   useCreatePredictionMutation,
   useGetMarketByIdQuery,
+  useLazyGetMarketsQuery,
   useGetLeaderboardQuery,
   useGetStatsQuery,
 } = statsApi

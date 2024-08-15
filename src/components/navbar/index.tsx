@@ -55,7 +55,7 @@ const Navbar = () => {
             >
               <div className="relative h-6 w-6 rounded-full">
                 <Image
-                  src="/default.jpeg"
+                  src="/profile.png"
                   alt="avatar"
                   fill
                   className="rounded-full"

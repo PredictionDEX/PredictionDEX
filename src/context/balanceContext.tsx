@@ -30,7 +30,6 @@ export const BalanceProvider: React.FC<{
   const fetchBalance = useCallback(async () => {
     if (!selectedAccount || !api) return
     const balance: any = await api.query.system.account(selectedAccount.address)
-    console.log(balance)
     setBalanceAmount(Number(balance.data.free))
   }, [selectedAccount, api])
 

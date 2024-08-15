@@ -9,14 +9,40 @@ import { CgMediaLive } from "react-icons/cg"
 import StatsCard from "@/components/card/stats"
 import MarketCard from "@/components/card/market"
 import { useGetMarketsQuery, useGetStatsQuery } from "@/store/api/statsApi"
-
+import { MarketStatus } from "@/types/generic"
+import useInfiniteScroll from "react-infinite-scroll-hook"
+import { useState } from "react"
+import categories from "@/app/_lib/category.json"
+import Image from "next/image"
 export default function Home() {
-  const { data: marketsData } = useGetMarketsQuery()
+  const [page, setPage] = useState(1)
+
+  const {
+    data: marketsData,
+    isLoading: marketLoading,
+    isError: marketError,
+  } = useGetMarketsQuery({
+    status: MarketStatus.LIVE,
+    page: String(page),
+    count: "4",
+  })
   const { data: marketStats, isLoading: marketStatsLoading } =
     useGetStatsQuery()
+
+  const [sentryRef] = useInfiniteScroll({
+    loading: marketLoading,
+    hasNextPage: marketsData?.pagination?.next !== null,
+    onLoadMore: () => {
+      console.log("Loading more")
+      setPage((prev) => prev + 1)
+    },
+    disabled: marketError,
+    rootMargin: "0px 0px 20px 0px",
+    delayInMs: 1000,
+  })
   return (
     <div>
-      <div className="flex gap-4 py-5 flex-wrap">
+      <div className="flex gap-4 py-5 px-3 flex-col md:flex-wrap md:flex-row md:px-0">
         <StatsCard
           isLoading={marketStatsLoading}
           title="Total Volume"
@@ -51,22 +77,29 @@ export default function Home() {
       <section>
         <h1 className="text-xl py-2 font-semibold flex gap-x-2 items-center">
           <CgMediaLive className="text-secondary animate-pulse" />
-          Live Markets
+          Trending Markets
         </h1>
-        <div className="flex flex-wrap">
-          {marketsData?.data.map((market) => (
-            <MarketCard
-              key={market.id}
-              id={market.id}
-              image={`https://ecg.nyc3.digitaloceanspaces.com/${market.images[0]}`}
-              outcomes={market.outcomes}
-              name={market.title}
-              time={market.resolution_date}
-              category={market.type}
-              totalVolume={market.pool_amount}
-              status={market.status}
-            />
-          ))}
+
+        <div className="flex flex-col md:flex-wrap md:flex-row">
+          {!marketLoading &&
+            marketsData?.data.map((market) => (
+              <MarketCard
+                key={market.id}
+                id={market.id}
+                image={`https://ecg.nyc3.digitaloceanspaces.com/${market.images[0]}`}
+                outcomes={market.outcomes}
+                name={market.title}
+                time={market.resolution_date}
+                category={market.type}
+                totalVolume={market.pool_amount}
+                status={market.status}
+              />
+            ))}
+          {(marketLoading || marketsData?.pagination?.next !== null) && (
+            <div ref={sentryRef} className="px-3">
+              Loading ...
+            </div>
+          )}
         </div>
       </section>
     </div>

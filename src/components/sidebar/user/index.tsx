@@ -9,7 +9,8 @@ import Link from "next/link"
 import { RiProfileLine } from "react-icons/ri"
 import { FaAngleRight } from "react-icons/fa"
 import { IoMdLogOut } from "react-icons/io"
-import FundsModal from "@/components/modal/funds"
+import FundsModal from "@/components/modal/funds/deposit"
+import WithdrawModal from "@/components/modal/funds/withdraw"
 
 interface IUserSidebarType {
   isSidebarOpen: boolean
@@ -18,19 +19,23 @@ interface IUserSidebarType {
 
 const UserSidebar = ({ isSidebarOpen, toggleSidebar }: IUserSidebarType) => {
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false)
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false)
   const { userBalance } = useBalance()
   const { data: userData, isLoading } = useGetMyDetailsQuery()
   const { selectedAccount } = usePolkadot()
-
+  const userBalanceFormatted = (userBalance.balance / 10 ** 9)?.toFixed(2)
   return (
     <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
-      <div className="flex flex-col break-all text-sm mt-3 ring-2 p-2 rounded-xl">
-        <p>{selectedAccount?.address}</p>
-        <div>
-          Balance: {(userBalance.balance / 10 ** 9)?.toFixed(2) || "-"} COMAI
-        </div>
+      <div className="flex flex-col break-all text-sm mt-3 ring-1 p-4 rounded-xl ring-gray-700 ">
+        <h6 className="text-xs font-normal text-gray-400">Wallet Balance</h6>
+        <h1 className="text-2xl font-medium break-all mt-1">
+          {userBalanceFormatted} COMAI
+        </h1>
+        <small className="text-xs leading-tight pt-1 text-gray-400">
+          {selectedAccount?.address}
+        </small>
       </div>
-      <div className="flex mt-3 ring-1 w-full flex-col items-center ring-gray-600  p-3 rounded-md gap-x-2">
+      <div className="flex mt-3 ring-1 w-full flex-col items-start ring-gray-700 bg-gray-900  p-3 rounded-md gap-x-2">
         <h6 className="text-xs font-normal text-gray-400">Total Balance</h6>
         <h1 className="text-2xl font-medium break-all mt-1">
           {userData?.tokens} COMAI
@@ -46,7 +51,7 @@ const UserSidebar = ({ isSidebarOpen, toggleSidebar }: IUserSidebarType) => {
           <Button
             type="button"
             variant="outlined"
-            onClick={() => setIsDepositModalOpen(true)}
+            onClick={() => setIsWithdrawModalOpen(true)}
           >
             Withdraw Funds
           </Button>
@@ -74,6 +79,10 @@ const UserSidebar = ({ isSidebarOpen, toggleSidebar }: IUserSidebarType) => {
         </button>
       </div>
       <FundsModal open={isDepositModalOpen} setOpen={setIsDepositModalOpen} />
+      <WithdrawModal
+        open={isWithdrawModalOpen}
+        setOpen={setIsWithdrawModalOpen}
+      />
     </Sidebar>
   )
 }
