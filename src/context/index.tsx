@@ -207,7 +207,7 @@ export const PolkadotProvider: React.FC<PolkadotProviderProps> = ({
     const tx = api.tx.utility.batchAll([
       api.tx.subspaceModule.addStake(validator, amt),
     ])
-    await completeTransaction(tx, callback)
+    // await completeTransaction(tx, callback)
   }
 
   async function completeTransaction(
@@ -260,7 +260,7 @@ export const PolkadotProvider: React.FC<PolkadotProviderProps> = ({
     const amt = Math.floor(Number(amount) * 10 ** 9)
     const tx = api.tx.subspaceModule.removeStake(validator, amt)
 
-    await completeTransaction(tx, callback)
+    // await completeTransaction(tx, callback)
   }
   async function transferStake({
     validatorFrom,
@@ -282,7 +282,7 @@ export const PolkadotProvider: React.FC<PolkadotProviderProps> = ({
     const tx = api.tx.utility.batchAll([
       api.tx.subspaceModule.transferStake(validatorFrom, validatorTo, amt),
     ])
-    await completeTransaction(tx, callback)
+    // await completeTransaction(tx, callback)
   }
 
   // public async transferAmount(to: string, amount: number) {
