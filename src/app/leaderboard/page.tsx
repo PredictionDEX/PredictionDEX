@@ -50,7 +50,7 @@ const LeaderboardPage = () => {
           <td>Points</td>
         </tr>
         {leaderboardData?.leaderboard.map((leaderboard, index) => (
-          <tr className="bg-gray-900 text-sm ring-1 ring-gray-700">
+          <tr className="bg-gray-900 text-sm ring-1 ring-gray-700" key={index}>
             <td className="py-3 pl-4">{index + 1}</td>
             <td className="">{leaderboard.public_address}</td>
             <td className="right-0">
