@@ -231,6 +231,7 @@ export const PolkadotProvider: React.FC<PolkadotProviderProps> = ({
     if (!extensionSelected.signer) return
     const unsub = await tx.signAndSend(
       selectedAccount.address,
+      // @ts-ignore
       { signer: extensionSelected.signer },
       async (result: any) => {
         console.log(result)
@@ -391,6 +392,7 @@ export const PolkadotProvider: React.FC<PolkadotProviderProps> = ({
               data: response.data.sign_message,
             },
             {
+              // @ts-ignore
               signer: extensionSelected?.signer,
             },
           )
