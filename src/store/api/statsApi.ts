@@ -19,6 +19,7 @@ export const statsApi = createApi({
     "GetMyInfo",
     "Leaderboard",
     "GetStats",
+    "GetMyMarket",
   ],
   endpoints: (builder) => ({
     getSignMessage: builder.mutation<
@@ -232,6 +233,54 @@ export const statsApi = createApi({
         return err.data
       },
     }),
+    getMySelfMarket: builder.query<
+      PaginatedApiResponse<Market>,
+      {
+        status: "created" | "prediction"
+        page: string
+        count: string
+      }
+    >({
+      query: ({ status, page, count }) => {
+        let url
+        if (status === "created") {
+          url = `market/me?page=${page}&count=${count}`
+        } else {
+          url = `prediction?page=${page}&count=${count}`
+        }
+        return {
+          method: "GET",
+          url: url,
+        }
+      },
+      providesTags: ["GetMyMarket"],
+      transformResponse: (response: PaginatedApiResponse<Market>) => {
+        return response
+      },
+      transformErrorResponse: (err) => {
+        return err.data
+      },
+      merge: (currentCache, newItems) => {
+        if (newItems && newItems.data) {
+          const existingIds = new Set(currentCache.data.map((item) => item.id))
+          const newUniqueItems = newItems.data.filter(
+            (item) => !existingIds.has(item.id),
+          )
+          currentCache.pagination = newItems.pagination
+          currentCache.data.push(...newUniqueItems)
+        }
+      },
+      serializeQueryArgs: ({ endpointName, queryArgs }) => {
+        return `${endpointName}-${queryArgs.status}`
+      },
+      keepUnusedDataFor: 0,
+      forceRefetch({ currentArg, previousArg }) {
+        return (
+          currentArg?.page !== previousArg?.page ||
+          currentArg?.count !== previousArg?.count
+        )
+      },
+    }),
   }),
 })
 
@@ -246,4 +295,5 @@ export const {
   useLazyGetMarketsQuery,
   useGetLeaderboardQuery,
   useGetStatsQuery,
+  useGetMySelfMarketQuery,
 } = statsApi

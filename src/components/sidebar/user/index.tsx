@@ -69,7 +69,8 @@ const UserSidebar = ({ isSidebarOpen, toggleSidebar }: IUserSidebarType) => {
         <Link href="/profile" className="w-full" onClick={toggleSidebar}>
           <button className="py-3 text-md ring-1 w-full ring-gray-600 px-3 rounded-md font-medium flex justify-between items-center">
             <div className="flex items-center gap-x-2">
-              <RiProfileLine size={20} className="text-secondary" /> Profile
+              <RiProfileLine size={20} className="text-secondary" /> Your
+              Markets
             </div>
             <div className="">
               <FaAngleRight />

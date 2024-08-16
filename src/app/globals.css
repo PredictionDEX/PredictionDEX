@@ -22,10 +22,10 @@ body {
   color: rgb(var(--foreground-rgb));
   background: url("/bg.svg");
   background-size: 100% 100%;
+  background-color: black;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-position: center;
-  background-color: #000 !important;
+  background-position: cover;
   font-family: "Satoshi", sans-serif;
   font-style: normal;
   font-optical-sizing: auto;
