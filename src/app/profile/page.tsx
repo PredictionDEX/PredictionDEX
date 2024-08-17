@@ -56,7 +56,7 @@ const Profile = () => {
         <div className="text-2xl font-semibold">
           <div className="text-2xl font-semibold pt-4">Your Markets</div>
           <p className="text-sm italic text-gray-500">
-            A place to view all the markets you've created and predicted.
+            A place to view all the markets you&apos;ve created and predicted.
           </p>
         </div>
       </div>

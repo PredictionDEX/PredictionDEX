@@ -1,3 +1,4 @@
+import UserBalance from "@/components/balance/token"
 import Button from "@/components/button"
 import { InputComponent } from "@/components/input"
 import { SelectComponent } from "@/components/select"
@@ -50,11 +51,18 @@ const CreatePredictionForm = ({ marketData }: { marketData: Market }) => {
           type="number"
           register={register}
           errors={errors["amount"]}
-          rules={{ required: "Amount is required" }}
+          rules={{
+            required: "Amount is required",
+            min: { value: 1, message: "Amount must be greater than 0" },
+            max: {
+              value: userData?.tokens,
+              message: "Amount cannot be more than your balance",
+            },
+          }}
         />
-        <h6 className="text-xs font-semibold mt-2 text-secondary">
-          Balance: {userData?.tokens} COMAI
-        </h6>
+        <div className="mt-1">
+          <UserBalance />
+        </div>
       </div>
       <div className="mt-2">
         <SelectComponent

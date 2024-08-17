@@ -27,9 +27,9 @@ const OutcomeCard = ({
           name
         )}
       </p>
-      <p className="text-sm font-medium">
+      <p className="text-sm font-medium text-secondary">
         {isLoading ? (
-          <div className="h-4 bg-gray-800 w-[80px] rounded-xl mb-1" />
+          <div className="h-4 bg-gray-800 w-[80px] rounded-xl mb-1 " />
         ) : (
           `${value}%`
         )}
