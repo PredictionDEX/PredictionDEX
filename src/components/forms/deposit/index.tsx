@@ -1,6 +1,6 @@
 import Button from "@/components/button"
 import { InputComponent } from "@/components/input"
-import { successToast } from "@/components/toast"
+import { errorToast, successToast } from "@/components/toast"
 import { usePolkadot } from "@/context"
 import { useBalance } from "@/context/balanceContext"
 import { formatTokenAmount } from "@/utils"
@@ -24,7 +24,7 @@ const DepositForm = () => {
       amount: 1,
     },
   })
-  const { userBalance } = useBalance()
+  const { userBalance, fetchUserStats } = useBalance()
   const [isDepositing, setIsDepositing] = React.useState(false)
   const { transfer } = usePolkadot()
   const handleCreateMarket = async (data: IDepositForm) => {
@@ -33,8 +33,13 @@ const DepositForm = () => {
       amount: String(data.amount),
       to: "5G3nNt5W44KUnygyRVLHxxbkZCYyYSsUJAbZZuQ2SzNia5jF",
       callback(txHash) {
-        if (!txHash) return
+        if (!txHash) {
+          errorToast("Deposit Transaction Failed")
+          setIsDepositing(false)
+          return
+        }
         setIsDepositing(false)
+        fetchUserStats()
         successToast("Deposit successful")
       },
     })

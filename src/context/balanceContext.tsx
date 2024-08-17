@@ -13,13 +13,14 @@ export type BalanceContextType = {
     balance: number
   }
 
-  fetchUserStats?: () => void
+  fetchUserStats: () => void
 }
 
 const BalanceContext = createContext<BalanceContextType>({
   userBalance: {
     balance: 0,
   },
+  fetchUserStats: () => {},
 })
 
 export const BalanceProvider: React.FC<{

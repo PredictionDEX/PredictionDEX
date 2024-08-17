@@ -1,7 +1,7 @@
 import UserBalance from "@/components/balance/token"
 import Button from "@/components/button"
 import { InputComponent } from "@/components/input"
-import { errorToast } from "@/components/toast"
+import { errorToast, successToast } from "@/components/toast"
 import { usePolkadot } from "@/context"
 import {
   useCompleteWithdrawlMutation,
@@ -48,12 +48,11 @@ const WithdrawForm = () => {
           signature: String(signature),
         }).unwrap()
         if (completeResponse.data) {
-          alert("Withdraw Success")
+          successToast("Amount withdrawn successfully")
         }
         setIsWithdraw(false)
       }
     } catch (e) {
-      console.log(e)
       setIsWithdraw(false)
       errorToast((e as Error).message)
     }

@@ -96,7 +96,7 @@ export const statsApi = createApi({
           body: formData,
         }
       },
-      invalidatesTags: (_, __, args) => [
+      invalidatesTags: () => [
         "MarketList",
         "MarketById",
         "GetMyInfo",

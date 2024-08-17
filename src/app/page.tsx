@@ -12,11 +12,9 @@ import { useGetMarketsQuery, useGetStatsQuery } from "@/store/api/statsApi"
 import { MarketStatus } from "@/types/generic"
 import useInfiniteScroll from "react-infinite-scroll-hook"
 import { useState } from "react"
-import categories from "@/app/_lib/category.json"
-import Image from "next/image"
+
 export default function Home() {
   const [page, setPage] = useState(1)
-
   const {
     data: marketsData,
     isLoading: marketLoading,
@@ -30,6 +28,9 @@ export default function Home() {
     {
       pollingInterval: 100000,
       skipPollingIfUnfocused: true,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+      refetchOnMountOrArgChange: true,
     },
   )
   const { data: marketStats, isLoading: marketStatsLoading } = useGetStatsQuery(
