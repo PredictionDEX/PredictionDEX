@@ -1,5 +1,5 @@
-import { createApi } from "@reduxjs/toolkit/query/react"
-import apiWrapper from "@/store/api/wrapper/apiWrapper"
+import { createApi } from "@reduxjs/toolkit/query/react";
+import apiWrapper from "@/store/api/wrapper/apiWrapper";
 import {
   ApiResponse,
   IFundsManagement,
@@ -12,8 +12,8 @@ import {
   Prediction,
   User,
   WithdrawInitResponse,
-} from "@/types"
-import { MarketStatus, TransactionType } from "@/types/generic"
+} from "@/types";
+import { MarketStatus, TransactionType } from "@/types/generic";
 export const statsApi = createApi({
   reducerPath: "statsApi",
   baseQuery: apiWrapper,
@@ -42,10 +42,10 @@ export const statsApi = createApi({
           body: {
             public_address,
           },
-        }
+        };
       },
       transformResponse: (response: ApiResponse<MessageResponse>) => {
-        return response
+        return response;
       },
     }),
     verifySignature: builder.mutation<
@@ -60,10 +60,10 @@ export const statsApi = createApi({
             public_address,
             signature,
           },
-        }
+        };
       },
       transformResponse: (response: ApiResponse<LoginResponse>) => {
-        return response
+        return response;
       },
     }),
     createMarket: builder.mutation<ApiResponse<LoginResponse>, FormData>({
@@ -72,21 +72,21 @@ export const statsApi = createApi({
           method: "POST",
           url: "market",
           body: formData,
-        }
+        };
       },
       invalidatesTags: ["MarketList", "GetMyInfo", "Leaderboard", "GetStats"],
       transformResponse: (response: ApiResponse<LoginResponse>) => {
-        return response
+        return response;
       },
       transformErrorResponse: (err) => {
-        return err.data
+        return err.data;
       },
     }),
     createPrediction: builder.mutation<
       ApiResponse<LoginResponse>,
       {
-        outcome_id: string
-        amount: string
+        outcome_id: string;
+        amount: string;
       }
     >({
       query: (formData) => {
@@ -94,7 +94,7 @@ export const statsApi = createApi({
           method: "POST",
           url: "prediction",
           body: formData,
-        }
+        };
       },
       invalidatesTags: () => [
         "MarketList",
@@ -104,17 +104,17 @@ export const statsApi = createApi({
         "GetStats",
       ],
       transformResponse: (response: ApiResponse<LoginResponse>) => {
-        return response
+        return response;
       },
       transformErrorResponse: (err) => {
-        return err.data
+        return err.data;
       },
     }),
     createDispute: builder.mutation<
       ApiResponse<LoginResponse>,
       {
-        market_id: string
-        reason: string
+        market_id: string;
+        reason: string;
       }
     >({
       query: (formData) => {
@@ -122,7 +122,7 @@ export const statsApi = createApi({
           method: "POST",
           url: "market/dispute-raise",
           body: formData,
-        }
+        };
       },
       invalidatesTags: (_, __, args) => [
         "MarketList",
@@ -132,37 +132,37 @@ export const statsApi = createApi({
         "GetStats",
       ],
       transformResponse: (response: ApiResponse<LoginResponse>) => {
-        return response
+        return response;
       },
       transformErrorResponse: (err) => {
-        return err.data
+        return err.data;
       },
     }),
     getMarkets: builder.query<
       PaginatedApiResponse<Market>,
       {
-        status: MarketStatus
-        page?: string
-        count?: string
-        type?: string
+        status: MarketStatus;
+        page?: string;
+        count?: string;
+        type?: string;
       }
     >({
       query: ({ status, page, count, type }) => {
-        let url = `market?status=${status}`
+        let url = `market?status=${status}`;
         if (page) {
-          url += `&page=${page}`
+          url += `&page=${page}`;
         }
         if (count) {
-          url += `&count=${count}`
+          url += `&count=${count}`;
         }
         if (type && type !== "all") {
-          url += `&type=${type}`
+          url += `&type=${type}`;
         }
 
         return {
           method: "GET",
           url: url,
-        }
+        };
       },
       providesTags: (result, error, { status, type }) => [
         { type: "MarketList", status },
@@ -170,31 +170,31 @@ export const statsApi = createApi({
       ],
 
       transformResponse: (response: PaginatedApiResponse<Market>) => {
-        return response
+        return response;
       },
       transformErrorResponse: (err) => {
-        console.error("Error fetching markets:", err)
-        return err.data
+        console.error("Error fetching markets:", err);
+        return err.data;
       },
       merge: (currentCache, newItems) => {
         if (newItems && newItems.data) {
-          const existingIds = new Set(currentCache.data.map((item) => item.id))
+          const existingIds = new Set(currentCache.data.map((item) => item.id));
           const newUniqueItems = newItems.data.filter(
-            (item) => !existingIds.has(item.id),
-          )
-          currentCache.pagination = newItems.pagination
-          currentCache.data.push(...newUniqueItems)
+            (item) => !existingIds.has(item.id)
+          );
+          currentCache.pagination = newItems.pagination;
+          currentCache.data.push(...newUniqueItems);
         }
       },
       serializeQueryArgs: ({ endpointName, queryArgs }) => {
-        return `${endpointName}-${queryArgs.status}`
+        return `${endpointName}-${queryArgs.status}`;
       },
       keepUnusedDataFor: 0,
       forceRefetch({ currentArg, previousArg }) {
         return (
           currentArg?.page !== previousArg?.page ||
           currentArg?.count !== previousArg?.count
-        )
+        );
       },
     }),
     getMarketById: builder.query<ApiResponse<Market>, number>({
@@ -202,16 +202,16 @@ export const statsApi = createApi({
         return {
           method: "GET",
           url: `market/${marketId}`,
-        }
+        };
       },
       providesTags: (result, error, marketId) => [
         { type: "MarketById", id: marketId },
       ],
       transformResponse: (response: ApiResponse<Market>) => {
-        return response
+        return response;
       },
       transformErrorResponse: (err) => {
-        return err.data
+        return err.data;
       },
     }),
     getMyDetails: builder.query<User, void>({
@@ -219,21 +219,21 @@ export const statsApi = createApi({
         return {
           method: "GET",
           url: "user/me",
-        }
+        };
       },
       providesTags: ["GetMyInfo"],
       transformResponse: (response: ApiResponse<User>) => {
-        return response.data
+        return response.data;
       },
       transformErrorResponse: (err) => {
-        return err.data
+        return err.data;
       },
       keepUnusedDataFor: 0,
     }),
     getLeaderboard: builder.query<
       {
-        leaderboard: User[]
-        rank: number
+        leaderboard: User[];
+        rank: number;
       },
       void
     >({
@@ -241,19 +241,19 @@ export const statsApi = createApi({
         return {
           method: "GET",
           url: "leaderboard",
-        }
+        };
       },
       providesTags: ["Leaderboard"],
       transformResponse: (
         response: ApiResponse<{
-          leaderboard: User[]
-          rank: number
-        }>,
+          leaderboard: User[];
+          rank: number;
+        }>
       ) => {
-        return response.data
+        return response.data;
       },
       transformErrorResponse: (err) => {
-        return err.data
+        return err.data;
       },
     }),
     getStats: builder.query<MarketStats, void>({
@@ -261,99 +261,99 @@ export const statsApi = createApi({
         return {
           method: "GET",
           url: "public-stats",
-        }
+        };
       },
       providesTags: ["GetStats"],
       transformResponse: (response: ApiResponse<MarketStats>) => {
-        return response.data
+        return response.data;
       },
       transformErrorResponse: (err) => {
-        return err.data
+        return err.data;
       },
     }),
     getMySelfMarketPredicted: builder.query<
-      PaginatedApiResponse<Prediction>,
+      PaginatedApiResponse<Market>,
       {
-        page: string
-        count: string
+        page: string;
+        count: string;
       }
     >({
       query: ({ page, count }) => {
-        const url = `prediction?page=${page}&count=${count}`
+        const url = `market/self-predicted?page=${page}&count=${count}`;
 
         return {
           method: "GET",
           url: url,
-        }
+        };
       },
       providesTags: ["GetMyMarketPredicted"],
-      transformResponse: (response: PaginatedApiResponse<Prediction>) => {
-        return response
+      transformResponse: (response: PaginatedApiResponse<Market>) => {
+        return response;
       },
       transformErrorResponse: (err) => {
-        return err.data
+        return err.data;
       },
       merge: (currentCache, newItems) => {
         if (newItems && newItems.data) {
-          const existingIds = new Set(currentCache.data.map((item) => item.id))
+          const existingIds = new Set(currentCache.data.map((item) => item.id));
           const newUniqueItems = newItems.data.filter(
-            (item) => !existingIds.has(item.id),
-          )
-          currentCache.pagination = newItems.pagination
-          currentCache.data.push(...newUniqueItems)
+            (item) => !existingIds.has(item.id)
+          );
+          currentCache.pagination = newItems.pagination;
+          currentCache.data.push(...newUniqueItems);
         }
       },
       serializeQueryArgs: ({ endpointName }) => {
-        return `${endpointName}-predicted`
+        return `${endpointName}-predicted`;
       },
       keepUnusedDataFor: 0,
       forceRefetch({ currentArg, previousArg }) {
         return (
           currentArg?.page !== previousArg?.page ||
           currentArg?.count !== previousArg?.count
-        )
+        );
       },
     }),
     getMySelfMarketCreated: builder.query<
       PaginatedApiResponse<Market>,
       {
-        page: string
-        count: string
+        page: string;
+        count: string;
       }
     >({
       query: ({ page, count }) => {
-        const url = `market/me?page=${page}&count=${count}`
+        const url = `market/me?page=${page}&count=${count}`;
         return {
           method: "GET",
           url: url,
-        }
+        };
       },
 
       transformResponse: (response: PaginatedApiResponse<Market>) => {
-        return response
+        return response;
       },
       transformErrorResponse: (err) => {
-        return err.data
+        return err.data;
       },
       merge: (currentCache, newItems) => {
         if (newItems && newItems.data) {
-          const existingIds = new Set(currentCache.data.map((item) => item.id))
+          const existingIds = new Set(currentCache.data.map((item) => item.id));
           const newUniqueItems = newItems.data.filter(
-            (item) => !existingIds.has(item.id),
-          )
-          currentCache.pagination = newItems.pagination
-          currentCache.data.push(...newUniqueItems)
+            (item) => !existingIds.has(item.id)
+          );
+          currentCache.pagination = newItems.pagination;
+          currentCache.data.push(...newUniqueItems);
         }
       },
       serializeQueryArgs: ({ endpointName }) => {
-        return `${endpointName}-created`
+        return `${endpointName}-created`;
       },
       keepUnusedDataFor: 0,
       forceRefetch({ currentArg, previousArg }) {
         return (
           currentArg?.page !== previousArg?.page ||
           currentArg?.count !== previousArg?.count
-        )
+        );
       },
     }),
     initializeWithdraw: builder.mutation<
@@ -367,13 +367,13 @@ export const statsApi = createApi({
           body: {
             amount,
           },
-        }
+        };
       },
       transformResponse: (response: ApiResponse<WithdrawInitResponse>) => {
-        return response
+        return response;
       },
       transformErrorResponse: (err) => {
-        return err.data
+        return err.data;
       },
     }),
     completeWithdrawl: builder.mutation<
@@ -387,49 +387,49 @@ export const statsApi = createApi({
           body: {
             signature,
           },
-        }
+        };
       },
       transformResponse: (response: ApiResponse<WithdrawInitResponse>) => {
-        console.log(response)
-        return response
+        console.log(response);
+        return response;
       },
       transformErrorResponse: (err) => {
-        return err.data
+        return err.data;
       },
     }),
     getUserTransaction: builder.query<
       PaginatedApiResponse<IFundsManagement>,
       {
-        status: TransactionType
-        page: string
-        count: string
+        status: TransactionType;
+        page: string;
+        count: string;
       }
     >({
       query: ({ status, page, count }) => {
-        let url
+        let url;
         if (status === TransactionType.DEPOSIT) {
-          url = `user/deposits?page=${page}&count=${count}`
+          url = `user/deposits?page=${page}&count=${count}`;
         } else {
-          url = `user/withdrawals?page=${page}&count=${count}`
+          url = `user/withdrawals?page=${page}&count=${count}`;
         }
         return {
           method: "GET",
           url: url,
-        }
+        };
       },
       providesTags: (_, __, { status }) => [
         "GetMyTransactions",
         { id: status, type: "GetMyTransactions" },
       ],
       transformResponse: (response: PaginatedApiResponse<IFundsManagement>) => {
-        return response
+        return response;
       },
       transformErrorResponse: (err) => {
-        return err.data
+        return err.data;
       },
     }),
   }),
-})
+});
 
 export const {
   useGetSignMessageMutation,
@@ -448,4 +448,4 @@ export const {
   useCreateDisputeMutation,
   useGetMySelfMarketCreatedQuery,
   useGetMySelfMarketPredictedQuery,
-} = statsApi
+} = statsApi;
