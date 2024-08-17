@@ -171,6 +171,7 @@ export interface Prediction {
   user_id: number
   outcome_id: number
   amount: number
+  outcome: Outcome
   created_at: string
   updated_at: string
 }
@@ -181,6 +182,7 @@ export interface Outcome {
   label: string
   total_amount: number
   created_at: string
+  market?: Market
   updated_at: string
   predictions: Prediction[]
   self_prediction: {
@@ -204,7 +206,6 @@ export interface Market {
   distribution: []
   creator: User | null
   disputer: User | null
-  // user_distributions:{}
   pool_amount: number
   created_at: string
   updated_at: string
@@ -252,4 +253,18 @@ export interface MarketStats {
   rewards: number
   live_markets: number
   predictions: number
+}
+
+export interface WithdrawInitResponse {
+  message: string
+}
+
+export interface IFundsManagement {
+  id: number
+  user_id: number
+  amount: number
+  tx_hash: string
+  block: null
+  created_at: Date
+  updated_at: Date
 }

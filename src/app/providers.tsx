@@ -3,7 +3,7 @@
 import React, { ReactNode } from "react"
 import { PolkadotProvider } from "../context"
 import { BalanceProvider } from "../context/balanceContext"
-import { ToastContainer } from "react-toastify"
+import { Toaster } from "react-hot-toast"
 import Navbar from "@/components/navbar"
 import { Provider } from "react-redux"
 import { store } from "@/store"
@@ -19,7 +19,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
             <Navbar />
             <div className="container">{children}</div>
           </div>
-          <ToastContainer />
+          <Toaster />
         </BalanceProvider>
       </PolkadotProvider>
     </Provider>

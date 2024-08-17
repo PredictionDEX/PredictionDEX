@@ -1,9 +1,14 @@
+import UserBalance from "@/components/balance/token"
 import Button from "@/components/button"
 import { InputComponent } from "@/components/input"
-import { useBalance } from "@/context/balanceContext"
-import { useGetMyDetailsQuery } from "@/store/api/statsApi"
-import { formatTokenAmount } from "@/utils"
-import { min } from "moment"
+import { errorToast } from "@/components/toast"
+import { usePolkadot } from "@/context"
+import {
+  useCompleteWithdrawlMutation,
+  useGetMyDetailsQuery,
+  useInitializeWithdrawMutation,
+} from "@/store/api/statsApi"
+
 import React from "react"
 import { useForm } from "react-hook-form"
 
@@ -23,10 +28,38 @@ const WithdrawForm = () => {
   })
   const { data: userData } = useGetMyDetailsQuery()
   const [isWithdraw, setIsWithdraw] = React.useState(false)
+  const { signMessage } = usePolkadot()
+  const [initWithdraw] = useInitializeWithdrawMutation()
+  const [completeWithdraw] = useCompleteWithdrawlMutation()
   const handleCreateMarket = async (data: IWithdrawForm) => {
-    setIsWithdraw(true)
+    try {
+      setIsWithdraw(true)
+      const response = await initWithdraw({
+        amount: data.amount.toString(),
+      }).unwrap()
+      if (response.data) {
+        const signature = await signMessage(response.data.message)
+        if (!signature) {
+          alert("Withdraw Error")
+          setIsWithdraw(false)
+          return
+        }
+        const completeResponse = await completeWithdraw({
+          signature: String(signature),
+        }).unwrap()
+        if (completeResponse.data) {
+          alert("Withdraw Success")
+        }
+        setIsWithdraw(false)
+      }
+    } catch (e) {
+      console.log(e)
+      setIsWithdraw(false)
+      errorToast((e as Error).message)
+    }
   }
   const userBalance = userData?.tokens ?? 0
+
   return (
     <form onSubmit={handleSubmit(handleCreateMarket)}>
       <div className="mt-4">
@@ -49,9 +82,9 @@ const WithdrawForm = () => {
             },
           }}
         />
-        <small className="text-xs text-gray-500">
-          Balance: {userBalance} COMAI
-        </small>
+        <div className="mt-2">
+          <UserBalance />
+        </div>
       </div>
       <div className="mt-4">
         <Button type="submit" variant="primary" isLoading={isWithdraw}>

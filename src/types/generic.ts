@@ -6,3 +6,8 @@ export enum MarketStatus {
   RESOLVED = "RESOLVED",
   DISPUTE_RESOLVED = "DISPUTE_RESOLVED",
 }
+
+export enum TransactionType {
+  DEPOSIT = "deposit",
+  WITHDRAW = "withdraw",
+}

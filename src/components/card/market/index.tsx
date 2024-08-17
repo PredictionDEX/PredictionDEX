@@ -9,6 +9,8 @@ import MarketSidebar from "@/components/sidebar/market"
 import { MarketStatus } from "@/types/generic"
 import { GoDotFill } from "react-icons/go"
 import categories from "@/app/_lib/category.json"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 interface IMarketCard {
   id: number
   name: string
@@ -21,6 +23,7 @@ interface IMarketCard {
   image: string
   isPreview?: boolean
   isLoading?: boolean
+  isClickable?: boolean
 }
 const MarketCard = ({
   id,
@@ -34,6 +37,7 @@ const MarketCard = ({
   isLoading = false,
   isFullWidth = false,
   isPreview = false,
+  isClickable = true,
 }: IMarketCard) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<number>(-1)
   const toggleSidebar = () => {
@@ -111,6 +115,7 @@ const MarketCard = ({
       </div>
     )
   }
+  const router = useRouter()
 
   return (
     <div className={`p-2 min-h-48 w-full md:w-1/3 ${isFullWidth && `!w-full`}`}>
@@ -132,13 +137,21 @@ const MarketCard = ({
               )}
 
               <div className="flex flex-col w-full">
-                <h1 className="text-sm font-semibold line-clamp-3">
+                <h1
+                  className={`text-sm font-semibold line-clamp-3 ${
+                    isClickable ? "cursor-pointer" : "cursor-none"
+                  }`}
+                  onClick={() => {
+                    isClickable ? router.push(`/market/${id}`) : ""
+                  }}
+                >
                   {isLoading ? (
                     <div className="h-4 bg-gray-800 w-full rounded-xl mb-1" />
                   ) : (
                     name
                   )}
                 </h1>
+
                 {isLoading && (
                   <div className="h-4 bg-gray-800 w-[90px] rounded-xl mb-1" />
                 )}

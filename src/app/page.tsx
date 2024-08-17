@@ -21,13 +21,26 @@ export default function Home() {
     data: marketsData,
     isLoading: marketLoading,
     isError: marketError,
-  } = useGetMarketsQuery({
-    status: MarketStatus.LIVE,
-    page: String(page),
-    count: "10",
-  })
-  const { data: marketStats, isLoading: marketStatsLoading } =
-    useGetStatsQuery()
+  } = useGetMarketsQuery(
+    {
+      status: MarketStatus.LIVE,
+      page: String(page),
+      count: "10",
+    },
+    {
+      pollingInterval: 100000,
+      skipPollingIfUnfocused: true,
+    },
+  )
+  const { data: marketStats, isLoading: marketStatsLoading } = useGetStatsQuery(
+    undefined,
+    {
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+      skipPollingIfUnfocused: true,
+      refetchOnMountOrArgChange: true,
+    },
+  )
 
   const [sentryRef] = useInfiniteScroll({
     loading: marketLoading,
@@ -58,7 +71,7 @@ export default function Home() {
         <StatsCard
           isLoading={marketStatsLoading}
           title="Total Rewards"
-          value={marketStats?.rewards!}
+          value={Number(marketStats?.rewards!.toFixed(2))}
           icon={<FaGifts size={36} className="text-secondary" />}
         />
         <StatsCard

@@ -12,6 +12,7 @@ import { IoMdLogOut } from "react-icons/io"
 import FundsModal from "@/components/modal/funds/deposit"
 import WithdrawModal from "@/components/modal/funds/withdraw"
 import { useRouter } from "next/navigation"
+import { FaHistory } from "react-icons/fa"
 
 interface IUserSidebarType {
   isSidebarOpen: boolean
@@ -23,7 +24,13 @@ const UserSidebar = ({ isSidebarOpen, toggleSidebar }: IUserSidebarType) => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false)
   const { userBalance } = useBalance()
   const router = useRouter()
-  const { data: userData, isLoading } = useGetMyDetailsQuery()
+  const { data: userData, isLoading } = useGetMyDetailsQuery(undefined, {
+    skip: !isSidebarOpen,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    skipPollingIfUnfocused: true,
+    refetchOnMountOrArgChange: true,
+  })
   const { selectedAccount, logoutUser } = usePolkadot()
   const userBalanceFormatted = (userBalance.balance / 10 ** 9)?.toFixed(2)
   const handleLogoutUser = () => {
@@ -45,7 +52,7 @@ const UserSidebar = ({ isSidebarOpen, toggleSidebar }: IUserSidebarType) => {
       <div className="flex mt-3 ring-1 w-full flex-col items-start ring-gray-700 bg-gray-900  p-3 rounded-md gap-x-2">
         <h6 className="text-xs font-normal text-gray-400">Total Balance</h6>
         <h1 className="text-2xl font-medium break-all mt-1">
-          {userData?.tokens} COMAI
+          {userData?.tokens?.toFixed(2) ?? 0} COMAI
         </h1>
         <div className="flex mt-3 gap-y-3  flex-col w-full">
           <Button
@@ -71,6 +78,21 @@ const UserSidebar = ({ isSidebarOpen, toggleSidebar }: IUserSidebarType) => {
             <div className="flex items-center gap-x-2">
               <RiProfileLine size={20} className="text-secondary" /> Your
               Markets
+            </div>
+            <div className="">
+              <FaAngleRight />
+            </div>
+          </button>
+        </Link>
+        <Link
+          href="/profile/history"
+          className="w-full"
+          onClick={toggleSidebar}
+        >
+          <button className="py-3 text-md ring-1 w-full ring-gray-600 px-3 rounded-md font-medium flex justify-between items-center">
+            <div className="flex items-center gap-x-2">
+              <FaHistory size={20} className="text-secondary" />
+              Transaction History
             </div>
             <div className="">
               <FaAngleRight />

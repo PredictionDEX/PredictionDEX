@@ -2,24 +2,33 @@ import { createApi } from "@reduxjs/toolkit/query/react"
 import apiWrapper from "@/store/api/wrapper/apiWrapper"
 import {
   ApiResponse,
+  IFundsManagement,
   LoginResponse,
   Market,
   MarketStats,
   MessageResponse,
+  Outcome,
   PaginatedApiResponse,
+  Prediction,
   User,
+  WithdrawInitResponse,
 } from "@/types"
-import { MarketStatus } from "@/types/generic"
+import { MarketStatus, TransactionType } from "@/types/generic"
 export const statsApi = createApi({
   reducerPath: "statsApi",
   baseQuery: apiWrapper,
+  keepUnusedDataFor: 0,
+  refetchOnMountOrArgChange: true,
+  refetchOnFocus: true,
   tagTypes: [
     "MarketList",
     "MarketById",
+    "GetMyTransactions",
     "GetMyInfo",
     "Leaderboard",
     "GetStats",
-    "GetMyMarket",
+    "GetMyMarketPredicted",
+    "GetMyMarketCreated",
   ],
   endpoints: (builder) => ({
     getSignMessage: builder.mutation<
@@ -84,6 +93,34 @@ export const statsApi = createApi({
         return {
           method: "POST",
           url: "prediction",
+          body: formData,
+        }
+      },
+      invalidatesTags: (_, __, args) => [
+        "MarketList",
+        "MarketById",
+        "GetMyInfo",
+        "Leaderboard",
+        "GetStats",
+      ],
+      transformResponse: (response: ApiResponse<LoginResponse>) => {
+        return response
+      },
+      transformErrorResponse: (err) => {
+        return err.data
+      },
+    }),
+    createDispute: builder.mutation<
+      ApiResponse<LoginResponse>,
+      {
+        market_id: string
+        reason: string
+      }
+    >({
+      query: (formData) => {
+        return {
+          method: "POST",
+          url: "market/dispute-raise",
           body: formData,
         }
       },
@@ -191,6 +228,7 @@ export const statsApi = createApi({
       transformErrorResponse: (err) => {
         return err.data
       },
+      keepUnusedDataFor: 0,
     }),
     getLeaderboard: builder.query<
       {
@@ -233,27 +271,64 @@ export const statsApi = createApi({
         return err.data
       },
     }),
-    getMySelfMarket: builder.query<
-      PaginatedApiResponse<Market>,
+    getMySelfMarketPredicted: builder.query<
+      PaginatedApiResponse<Prediction>,
       {
-        status: "created" | "prediction"
         page: string
         count: string
       }
     >({
-      query: ({ status, page, count }) => {
-        let url
-        if (status === "created") {
-          url = `market/me?page=${page}&count=${count}`
-        } else {
-          url = `prediction?page=${page}&count=${count}`
-        }
+      query: ({ page, count }) => {
+        const url = `prediction?page=${page}&count=${count}`
+
         return {
           method: "GET",
           url: url,
         }
       },
-      providesTags: ["GetMyMarket"],
+      providesTags: ["GetMyMarketPredicted"],
+      transformResponse: (response: PaginatedApiResponse<Prediction>) => {
+        return response
+      },
+      transformErrorResponse: (err) => {
+        return err.data
+      },
+      merge: (currentCache, newItems) => {
+        if (newItems && newItems.data) {
+          const existingIds = new Set(currentCache.data.map((item) => item.id))
+          const newUniqueItems = newItems.data.filter(
+            (item) => !existingIds.has(item.id),
+          )
+          currentCache.pagination = newItems.pagination
+          currentCache.data.push(...newUniqueItems)
+        }
+      },
+      serializeQueryArgs: ({ endpointName }) => {
+        return `${endpointName}-predicted`
+      },
+      keepUnusedDataFor: 0,
+      forceRefetch({ currentArg, previousArg }) {
+        return (
+          currentArg?.page !== previousArg?.page ||
+          currentArg?.count !== previousArg?.count
+        )
+      },
+    }),
+    getMySelfMarketCreated: builder.query<
+      PaginatedApiResponse<Market>,
+      {
+        page: string
+        count: string
+      }
+    >({
+      query: ({ page, count }) => {
+        const url = `market/me?page=${page}&count=${count}`
+        return {
+          method: "GET",
+          url: url,
+        }
+      },
+
       transformResponse: (response: PaginatedApiResponse<Market>) => {
         return response
       },
@@ -270,8 +345,8 @@ export const statsApi = createApi({
           currentCache.data.push(...newUniqueItems)
         }
       },
-      serializeQueryArgs: ({ endpointName, queryArgs }) => {
-        return `${endpointName}-${queryArgs.status}`
+      serializeQueryArgs: ({ endpointName }) => {
+        return `${endpointName}-created`
       },
       keepUnusedDataFor: 0,
       forceRefetch({ currentArg, previousArg }) {
@@ -279,6 +354,78 @@ export const statsApi = createApi({
           currentArg?.page !== previousArg?.page ||
           currentArg?.count !== previousArg?.count
         )
+      },
+    }),
+    initializeWithdraw: builder.mutation<
+      ApiResponse<WithdrawInitResponse>,
+      { amount: string }
+    >({
+      query: ({ amount }) => {
+        return {
+          method: "POST",
+          url: "user/withdraw-init",
+          body: {
+            amount,
+          },
+        }
+      },
+      transformResponse: (response: ApiResponse<WithdrawInitResponse>) => {
+        return response
+      },
+      transformErrorResponse: (err) => {
+        return err.data
+      },
+    }),
+    completeWithdrawl: builder.mutation<
+      ApiResponse<WithdrawInitResponse>,
+      { signature: string }
+    >({
+      query: ({ signature }) => {
+        return {
+          method: "POST",
+          url: "user/withdraw",
+          body: {
+            signature,
+          },
+        }
+      },
+      transformResponse: (response: ApiResponse<WithdrawInitResponse>) => {
+        console.log(response)
+        return response
+      },
+      transformErrorResponse: (err) => {
+        return err.data
+      },
+    }),
+    getUserTransaction: builder.query<
+      PaginatedApiResponse<IFundsManagement>,
+      {
+        status: TransactionType
+        page: string
+        count: string
+      }
+    >({
+      query: ({ status, page, count }) => {
+        let url
+        if (status === TransactionType.DEPOSIT) {
+          url = `user/deposits?page=${page}&count=${count}`
+        } else {
+          url = `user/withdrawals?page=${page}&count=${count}`
+        }
+        return {
+          method: "GET",
+          url: url,
+        }
+      },
+      providesTags: (_, __, { status }) => [
+        "GetMyTransactions",
+        { id: status, type: "GetMyTransactions" },
+      ],
+      transformResponse: (response: PaginatedApiResponse<IFundsManagement>) => {
+        return response
+      },
+      transformErrorResponse: (err) => {
+        return err.data
       },
     }),
   }),
@@ -290,10 +437,15 @@ export const {
   useCreateMarketMutation,
   useGetMarketsQuery,
   useGetMyDetailsQuery,
+  useInitializeWithdrawMutation,
+  useCompleteWithdrawlMutation,
   useCreatePredictionMutation,
   useGetMarketByIdQuery,
   useLazyGetMarketsQuery,
   useGetLeaderboardQuery,
   useGetStatsQuery,
-  useGetMySelfMarketQuery,
+  useGetUserTransactionQuery,
+  useCreateDisputeMutation,
+  useGetMySelfMarketCreatedQuery,
+  useGetMySelfMarketPredictedQuery,
 } = statsApi

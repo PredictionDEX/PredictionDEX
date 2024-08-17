@@ -63,7 +63,7 @@ const Navbar = () => {
           )}
           {selectedAccount ? (
             <div
-              className="flex items-center py-1 gap-x-1 ring-1 ring-secondary rounded-xl px-2 shadow-lg"
+              className="flex items-center py-1 gap-x-1 ring-1 ring-secondary rounded-xl px-2 shadow-lg cursor-pointer"
               onClick={() => setIsSidebarOpen(true)}
             >
               <div className="relative h-6 w-6 rounded-full">

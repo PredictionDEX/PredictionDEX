@@ -1,17 +1,14 @@
 "use client"
 import MarketCard from "@/components/card/market"
 import TabButton from "@/components/tabButton"
-import {
-  useGetMarketsQuery,
-  useGetMySelfMarketQuery,
-} from "@/store/api/statsApi"
+import { useGetMarketsQuery } from "@/store/api/statsApi"
 import { MarketStatus } from "@/types/generic"
 import React, { useState } from "react"
 import useInfiniteScroll from "react-infinite-scroll-hook"
 
 const History = () => {
   const [page, setPage] = useState(1)
-  const [market, setMarket] = useState<MarketStatus>(MarketStatus.FLASHED)
+  const [market, setMarket] = useState<MarketStatus>(MarketStatus.CLOSED)
 
   const {
     data: marketData,
@@ -48,14 +45,14 @@ const History = () => {
       </div>
       <div className="flex gap-x-1 my-3 mt-4">
         <TabButton
-          isActive={market === MarketStatus.FLASHED}
-          handleChange={() => handleKeyChange(MarketStatus.FLASHED)}
+          isActive={market === MarketStatus.CLOSED}
+          handleChange={() => handleKeyChange(MarketStatus.CLOSED)}
         >
           Completed Markets
         </TabButton>
         <TabButton
-          isActive={market === MarketStatus.CLOSED}
-          handleChange={() => handleKeyChange(MarketStatus.CLOSED)}
+          isActive={market === MarketStatus.FLASHED}
+          handleChange={() => handleKeyChange(MarketStatus.FLASHED)}
         >
           Closed Markets
         </TabButton>

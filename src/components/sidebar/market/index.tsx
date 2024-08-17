@@ -16,7 +16,13 @@ import { Outcome } from "@/types"
 import { successToast } from "@/components/toast"
 import Image from "next/image"
 import { MarketStatus } from "@/types/generic"
-import { getUser } from "@/utils/token"
+import DisputeModal from "@/components/modal/dispute"
+import { computeWinPool } from "@/utils"
+import ResolvedMarket from "@/components/markets/resolved"
+import DisputedMarket from "@/components/markets/disputed"
+import FlashedMarket from "@/components/markets/flashed"
+import ClosedMarket from "@/components/markets/closed"
+import LiveMarket from "@/components/markets/live"
 
 interface IMarketSidebarType {
   isSidebarOpen: boolean
@@ -32,35 +38,9 @@ const MarketSidebar = ({
   const { data: marketData } = useGetMarketByIdQuery(marketId, {
     skip: !marketId && !isSidebarOpen,
   })
-  const {
-    register,
-    handleSubmit,
-    control,
 
-    formState: { errors },
-  } = useForm({
-    mode: "all",
-  })
-  const { data: userData } = useGetMyDetailsQuery()
-  const [createPrediction] = useCreatePredictionMutation()
-  const [isBetting, setIsBetting] = useState(false)
-  const handleSubmitBet = async (data: any) => {
-    setIsBetting(true)
-    try {
-      const response = await createPrediction({
-        amount: data.amount,
-        outcome_id: String(data.outcome.value),
-      }).unwrap()
-      setIsBetting(false)
-      successToast("Predicted on market successfully")
-    } catch (e) {
-      setIsBetting(false)
-      console.log(e)
-    }
-  }
   const status = marketData?.data.status
-  const user = getUser()
-  const { selectedAccount, isInitialized, isConnected } = usePolkadot()
+  const [disputeModal, setDisputeModal] = useState(false)
 
   return (
     <Sidebar title="" isOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
@@ -99,140 +79,28 @@ const MarketSidebar = ({
       <div className="pt-3">
         <div className="ring-1 ring-gray-700 rounded-xl p-3">
           {status === MarketStatus.LIVE && (
-            <>
-              <h4 className="text-md font-semibold">Place your bet</h4>
-              <form onSubmit={handleSubmit(handleSubmitBet)}>
-                <div className="mt-2">
-                  <InputComponent
-                    label="Enter your bet amount"
-                    name="amount"
-                    placeholder="Enter amount"
-                    type="number"
-                    register={register}
-                    errors={errors["amount"]}
-                    rules={{ required: "Amount is required" }}
-                  />
-                  <h6 className="text-xs font-semibold mt-2 text-secondary">
-                    Balance: {userData?.tokens} COMAI
-                  </h6>
-                </div>
-                <div className="mt-2">
-                  <SelectComponent
-                    name="outcome"
-                    label="Select Outcome"
-                    isSearchable
-                    placeholder=""
-                    options={
-                      marketData?.data.outcomes.map((outcome: Outcome) => ({
-                        label: outcome.label,
-                        value: String(outcome.id),
-                      })) || []
-                    }
-                    control={control}
-                    errors={errors["outcome"]}
-                    rules={{ required: "Outcome is required" }}
-                  />
-                </div>
-                <div className="mt-4">
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    isLoading={isBetting}
-                    disabled={
-                      isInitialized &&
-                      (selectedAccount?.address === "" || !isConnected)
-                    }
-                  >
-                    Place Bet
-                  </Button>
-                </div>
-              </form>
-            </>
+            <LiveMarket marketData={marketData!.data} />
           )}
-          {status === MarketStatus.CLOSED && (
-            <>
-              <h4 className="text-md font-semibold">View Result</h4>
-              <div className="mt-3 text-sm">
-                <p>
-                  Market is closed for prediction. Results will be announced
-                  shortly!
-                </p>
-              </div>
-            </>
-          )}
+          {status === MarketStatus.CLOSED && <ClosedMarket />}
           {status === MarketStatus.FLASHED && (
-            <>
-              <h4 className="text-md font-semibold">View Result</h4>
-              <div className="mt-1 text-sm flex flex-col">
-                <h1 className="text-md font-semibold">
-                  <span className="font-medium text-xs text-secondary ">
-                    Winning Outcome:
-                  </span>{" "}
-                  Tradeu
-                </h1>
-                <h4 className="my-1 text-xs text-secondary font-medium">
-                  Rewards will be distributed in 2 hrs
-                </h4>
-                <small className="italic text-[10px] pt-1">
-                  Note: You need to pay 200 COMAI to dispute the market.
-                </small>
-                <div className="mt-3">
-                  <Button type="button" variant="primary">
-                    Dispute Market
-                  </Button>
-                </div>
-              </div>
-            </>
+            <FlashedMarket
+              marketData={marketData!.data}
+              setDisputeModal={setDisputeModal}
+            />
           )}
           {status === MarketStatus.DISPUTED && (
-            <>
-              <h4 className="text-md font-semibold">View Result</h4>
-              <div className="mt-1 text-sm flex flex-col">
-                <h1 className="text-md font-semibold">
-                  <span className="font-medium text-xs text-secondary ">
-                    Winning Outcome:
-                  </span>{" "}
-                  Tradeu
-                </h1>
-                <p className="mt-3">
-                  Result of the market has been disputed! Please wait until the
-                  result is settled up for the rewards!
-                </p>
-              </div>
-            </>
+            <DisputedMarket marketData={marketData!.data} />
           )}
           {(status === MarketStatus.RESOLVED ||
             status === MarketStatus.DISPUTE_RESOLVED) && (
-            <>
-              <h4 className="text-md font-semibold">View Result</h4>
-              <div className="mt-1 text-sm flex flex-col">
-                <h1 className="text-md font-semibold">
-                  <span className="font-medium text-xs text-secondary ">
-                    Winning Outcome:
-                  </span>{" "}
-                  Tradeu
-                </h1>
-                <h1 className="text-md font-semibold mt-1">
-                  <span className="font-medium text-xs text-secondary ">
-                    Win Pool Amount:
-                  </span>{" "}
-                  0 COMAI
-                </h1>
-                <h1 className="text-md font-semibold mt-1">
-                  <span className="font-medium text-xs text-secondary ">
-                    Your Bet on Winning Outcome:
-                  </span>{" "}
-                  0 COMAI
-                </h1>
-                <h1 className="text-md font-semibold mt-1">
-                  <span className="font-medium text-xs text-secondary ">
-                    Your Earnings:
-                  </span>{" "}
-                  0 COMAI
-                </h1>
-              </div>
-            </>
+            <ResolvedMarket marketData={marketData!.data} />
           )}
+
+          <DisputeModal
+            open={disputeModal}
+            setOpen={setDisputeModal}
+            marketId={String(marketId)}
+          />
         </div>
       </div>
     </Sidebar>

@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 import Providers from "./providers"
 import "react-datepicker/dist/react-datepicker.css"
 import "react-responsive-modal/styles.css"
-import "react-toastify/dist/ReactToastify.css"
 import "./globals.css"
 
 export const metadata: Metadata = {

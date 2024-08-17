@@ -24,6 +24,7 @@
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.52.2",
+    "react-hot-toast": "^2.4.1",
     "react-icons": "^5.2.1",
     "react-infinite-scroll-hook": "^4.1.1",
     "react-moment": "^1.1.3",

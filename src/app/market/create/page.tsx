@@ -5,7 +5,7 @@ import { DatePickerComponent } from "@/components/datepicker"
 import { InputComponent } from "@/components/input"
 import ClockContainer from "@/components/misc/clock"
 import { SelectComponent } from "@/components/select"
-import { successToast } from "@/components/toast"
+import { errorToast, successToast } from "@/components/toast"
 import { UploaderPreview } from "@/components/uploader"
 import { usePolkadot } from "@/context"
 import { useCreateMarketMutation } from "@/store/api/statsApi"
@@ -18,6 +18,8 @@ import { LuCalendar } from "react-icons/lu"
 import { PiUploadSimple } from "react-icons/pi"
 import categories from "@/app/_lib/category.json"
 import { Outcome } from "@/types"
+import UserBalance from "@/components/balance/token"
+import AmountWarning from "@/components/balance/message"
 const CreateMarket = () => {
   const {
     register,
@@ -60,6 +62,7 @@ const CreateMarket = () => {
       router.push("/")
     } catch (e) {
       setIsCreating(false)
+      errorToast((e as Error).message)
       console.log(e)
     }
   }
@@ -153,6 +156,11 @@ const CreateMarket = () => {
                 errors={errors["image"]}
               />
             </div>
+            <hr className="my-2 bg-gray-700" />
+            <div className="pb-2">
+              <UserBalance />
+            </div>
+            <AmountWarning amount="10" action="create" />
             <div className="mt-4">
               <Button type="submit" variant="primary" isLoading={isCreating}>
                 Create Market

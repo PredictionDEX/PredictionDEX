@@ -15,7 +15,6 @@ import {
 import { errorToast } from "@/components/toast"
 import { getWallets } from "@subwallet/wallet-connect/dotsama/wallets"
 import { Wallet } from "@subwallet/wallet-connect/types"
-import WalletModal from "../components/modal/wallet"
 import {
   useGetSignMessageMutation,
   useVerifySignatureMutation,
@@ -34,6 +33,7 @@ interface PolkadotContextType {
   blockNumber: number
   isConnected: boolean
   isInitialized: boolean
+  signMessage: (message: string) => Promise<string | undefined>
   isConnecting: boolean
   accounts: InjectedAccountWithMeta[]
   selectedAccount: InjectedAccountWithMeta | undefined
@@ -242,6 +242,32 @@ export const PolkadotProvider: React.FC<PolkadotProviderProps> = ({
 
   const [getSignMessage] = useGetSignMessageMutation()
   const [getVerifySignature] = useVerifySignatureMutation()
+  const signMessage = async (message: string) => {
+    if (!api || !selectedAccount || !polkadotApi.web3FromAddress) return
+    if (extensionSelected === null || !extensionSelected.signer) return
+    const tx = await api?.sign(
+      selectedAccount.address,
+      {
+        data: message,
+      },
+      {
+        // @ts-ignore
+        signer: extensionSelected?.signer,
+      },
+    )
+    return String(tx)
+    // const response= await api?.sign(
+    //         wallet.address,
+    //         {
+    //           data: response.data.sign_message,
+    //         },
+    //         {
+    //           // @ts-ignore
+    //           signer: extensionSelected?.signer,
+    //         },
+    //       )
+  }
+
   const handleWalletSelections = useCallback(
     async (wallet: InjectedAccountWithMeta) => {
       try {
@@ -306,6 +332,7 @@ export const PolkadotProvider: React.FC<PolkadotProviderProps> = ({
         },
         isConnecting,
         transfer,
+        signMessage,
         wallets: dotsamaWallets,
         extensionSelected,
         setExtensionSelected,

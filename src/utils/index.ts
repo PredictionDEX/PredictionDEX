@@ -1,3 +1,5 @@
+import { Market, Outcome } from "@/types"
+
 export function truncateWalletAddress(
   address: string,
   startLength: number = 6,
@@ -22,4 +24,49 @@ export function formatTokenAmount(amount?: number, decimal = 9): number {
   return Number(
     (parseFloat(amount.toString()) / Math.pow(10, decimal)).toFixed(2),
   )
+}
+
+export const computeWinPool = (
+  outcomes: Outcome[] | undefined,
+  winningOutcomeId: number | undefined | null,
+) => {
+  if (!outcomes || !winningOutcomeId) return 0
+  const losingOutcomes = outcomes.filter(
+    (outcome) => outcome.id !== winningOutcomeId,
+  )
+  let total = 0
+  for (const loser of losingOutcomes) {
+    total += loser.total_amount
+  }
+  return total
+}
+
+export const userPredictionOnWinPool = (
+  outcomes: Outcome[] | undefined,
+  winningOutcomeId: number | undefined | null,
+) => {
+  if (!outcomes || !winningOutcomeId) return 0
+  let userPrediction = 0
+  outcomes.map((outcome) => {
+    if (
+      outcome.id === winningOutcomeId &&
+      outcome.self_prediction &&
+      outcome.self_prediction.total_amount > 0
+    ) {
+      userPrediction += outcome.self_prediction?.total_amount
+    }
+  })
+  return userPrediction
+}
+
+export const highestPrediction = (outcomes: Outcome[]) => {
+  let highestPrediction = 0
+  for (const outcome of outcomes) {
+    for (const prediction of outcome.predictions) {
+      if (prediction.amount > highestPrediction) {
+        highestPrediction = prediction.amount
+      }
+    }
+  }
+  return highestPrediction
 }
