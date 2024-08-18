@@ -70,3 +70,16 @@ export const highestPrediction = (outcomes: Outcome[]) => {
   }
   return highestPrediction
 }
+
+
+export const predictPotentialEarning=(outcomes:Outcome[],outcomeId:string,outcomeAmount:string)=>{
+const losePool=computeWinPool(outcomes,Number(outcomeId));
+const winPool=outcomes.find(outcome=>outcome.id===Number(outcomeId))?.total_amount??0;
+const winPoolWithNewAmount=winPool+Number(outcomeAmount);
+const winPoolPercentage=Number(outcomeAmount)/winPoolWithNewAmount;
+
+return losePool*0.7*winPoolPercentage+Number(outcomeAmount);
+  
+
+
+}

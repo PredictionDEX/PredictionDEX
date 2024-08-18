@@ -12,9 +12,11 @@ import { useGetMarketsQuery, useGetStatsQuery } from "@/store/api/statsApi"
 import { MarketStatus } from "@/types/generic"
 import useInfiniteScroll from "react-infinite-scroll-hook"
 import { useState } from "react"
+import { usePolkadot } from "@/context"
 
 export default function Home() {
   const [page, setPage] = useState(1)
+  const {selectedAccount}=usePolkadot();
   const {
     data: marketsData,
     isLoading: marketLoading,
@@ -107,6 +109,7 @@ export default function Home() {
                 category={market.type}
                 totalVolume={market.pool_amount}
                 status={market.status}
+                isMarketCreator={market.creator?.public_address ===selectedAccount?.address}
               />
             ))}
           {(marketLoading || marketsData?.pagination?.next !== null) && (

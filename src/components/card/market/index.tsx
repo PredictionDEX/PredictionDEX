@@ -24,6 +24,7 @@ interface IMarketCard {
   isPreview?: boolean
   isLoading?: boolean
   isClickable?: boolean
+  isMarketCreator:boolean
 }
 const MarketCard = ({
   id,
@@ -34,6 +35,7 @@ const MarketCard = ({
   status,
   totalVolume,
   outcomes,
+  isMarketCreator,
   isLoading = false,
   isFullWidth = false,
   isPreview = false,
@@ -164,6 +166,11 @@ const MarketCard = ({
                 )}
               </div>
             </div>
+            {isMarketCreator && (
+            <div className="bg-green-200 text-black rounded-full px-2 h-6 text-xs flex justify-center items-center font-medium">
+              Creator
+              </div>
+            )}
           </div>
 
           <div className="flex gap-x-3 mt-4">

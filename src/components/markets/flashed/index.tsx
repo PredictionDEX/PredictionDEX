@@ -29,7 +29,7 @@ const FlashedMarket = ({
         />
       </div>
       <div className="mt-3">
-        <AmountWarning amount="10" action="dispute" />
+        <AmountWarning amount="50" action="dispute" />
       </div>
       <div className="mt-3">
         <Button

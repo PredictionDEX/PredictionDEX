@@ -107,34 +107,7 @@ const TransactionHistory = () => {
         </div>
       </div>
 
-      {/* <div className="flex flex-1 flex-col md:flex-wrap md:flex-row">
-        {!isLoading && myMarket?.data?.length === 0 && (
-          <div className="text-center w-full mt-4">No markets found</div>
-        )}
-        {!isLoading &&
-          myMarket?.data?.map((market) => (
-            <MarketCard
-              key={market.id}
-              id={market.id}
-              image={
-                market?.images?.length > 0
-                  ? `https://ecg.nyc3.digitaloceanspaces.com/${market.images[0]}`
-                  : ""
-              }
-              outcomes={market.outcomes ?? []}
-              name={market.title}
-              time={market.resolution_date}
-              category={market.type}
-              totalVolume={market.pool_amount}
-              status={market.status}
-            />
-          ))}
-        {(isLoading || myMarket?.pagination?.next !== null) && (
-          <div ref={sentryRef} className="px-3">
-            Loading ...
-          </div>
-        )}
-      </div> */}
+   
     </div>
   )
 }

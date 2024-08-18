@@ -20,6 +20,7 @@ import categories from "@/app/_lib/category.json"
 import { Outcome } from "@/types"
 import UserBalance from "@/components/balance/token"
 import AmountWarning from "@/components/balance/message"
+import { HOST_FEE } from "@/app/_lib/constants"
 const CreateMarket = () => {
   const {
     register,
@@ -50,7 +51,7 @@ const CreateMarket = () => {
     formData.append("title", data.title)
     formData.append("type", data.type.value)
     formData.append("resolution_date", data.resolution_date)
-    data.outcomes.map((outcome: string, index: number) => {
+    data.outcomes?.filter((oc:string) => oc !== "").map((outcome: string, index: number) => {
       formData.append(`outcomes[${index}]`, outcome)
     })
     formData.append("images", data.image)
@@ -117,9 +118,9 @@ const CreateMarket = () => {
                   closeOnScroll={(e) => e.target === document}
                   selectsStart
                   showTimeSelect
-                  label="Market Resolution Date"
+                  label="Market Closing Date"
                   errors={errors["resolution_date"]}
-                  rules={{ required: "Resolution date is required" }}
+                  rules={{ required: "Closing date is required" }}
                   calendarContainer={ClockContainer}
                 />
               </div>
@@ -160,7 +161,7 @@ const CreateMarket = () => {
             <div className="pb-2">
               <UserBalance />
             </div>
-            <AmountWarning amount="10" action="create" />
+            <AmountWarning amount={String(HOST_FEE)} action="create" />
             <div className="mt-4">
               <Button type="submit" variant="primary" isLoading={isCreating}>
                 Create Market
@@ -204,6 +205,7 @@ const CreateMarket = () => {
             totalVolume={0}
             isFullWidth
             isPreview
+            isMarketCreator
           />
         </div>
       </div>

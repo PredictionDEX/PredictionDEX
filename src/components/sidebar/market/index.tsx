@@ -1,33 +1,33 @@
-import React, { useState } from "react"
-import Sidebar from ".."
-import { usePolkadot } from "@/context"
-import { useForm } from "react-hook-form"
+import React, { useState } from "react";
+import Sidebar from "..";
+import { usePolkadot } from "@/context";
+import { useForm } from "react-hook-form";
 import {
   useCreatePredictionMutation,
   useGetMarketByIdQuery,
   useGetMyDetailsQuery,
-} from "@/store/api/statsApi"
-import OutcomeProgress from "@/components/progress/outcome"
-import { InputComponent } from "@/components/input"
-import { SelectComponent } from "@/components/select"
-import Button from "@/components/button"
-import Moment from "react-moment"
-import { Outcome } from "@/types"
-import { successToast } from "@/components/toast"
-import Image from "next/image"
-import { MarketStatus } from "@/types/generic"
-import DisputeModal from "@/components/modal/dispute"
-import { computeWinPool } from "@/utils"
-import ResolvedMarket from "@/components/markets/resolved"
-import DisputedMarket from "@/components/markets/disputed"
-import FlashedMarket from "@/components/markets/flashed"
-import ClosedMarket from "@/components/markets/closed"
-import LiveMarket from "@/components/markets/live"
+} from "@/store/api/statsApi";
+import OutcomeProgress from "@/components/progress/outcome";
+import { InputComponent } from "@/components/input";
+import { SelectComponent } from "@/components/select";
+import Button from "@/components/button";
+import Moment from "react-moment";
+import { Outcome } from "@/types";
+import { successToast } from "@/components/toast";
+import Image from "next/image";
+import { MarketStatus } from "@/types/generic";
+import DisputeModal from "@/components/modal/dispute";
+import { computeWinPool } from "@/utils";
+import ResolvedMarket from "@/components/markets/resolved";
+import DisputedMarket from "@/components/markets/disputed";
+import FlashedMarket from "@/components/markets/flashed";
+import ClosedMarket from "@/components/markets/closed";
+import LiveMarket from "@/components/markets/live";
 
 interface IMarketSidebarType {
-  isSidebarOpen: boolean
-  toggleSidebar: () => void
-  marketId: number
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
+  marketId: number;
 }
 
 const MarketSidebar = ({
@@ -37,18 +37,30 @@ const MarketSidebar = ({
 }: IMarketSidebarType) => {
   const { data: marketData } = useGetMarketByIdQuery(marketId, {
     skip: !marketId && !isSidebarOpen,
-  })
+  });
 
-  const status = marketData?.data.status
-  const [disputeModal, setDisputeModal] = useState(false)
-
+  const status = marketData?.data.status;
+  const [disputeModal, setDisputeModal] = useState(false);
+  const { selectedAccount } = usePolkadot();
   return (
     <Sidebar title="" isOpen={isSidebarOpen} toggleSidebar={toggleSidebar}>
-      <h1 className="text-md font-semibold">{marketData?.data.title}</h1>
-      <p className="text-xs font-normal pt-1 text-gray-300">
-        Market {status === "LIVE" ? "closes" : "closed"}{" "}
-        <Moment fromNow>{marketData?.data?.resolution_date}</Moment>
-      </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-md font-semibold">{marketData?.data.title}</h1>
+          <p className="text-xs font-normal pt-1 text-gray-300">
+            Market {status === "LIVE" ? "closes" : "closed"}{" "}
+            <Moment fromNow>{marketData?.data?.resolution_date}</Moment>
+          </p>
+        </div>
+
+        {marketData?.data.creator?.public_address ===
+          selectedAccount?.address && (
+          <div className="bg-green-200 text-black rounded-full px-2 h-6 text-xs flex justify-center items-center font-medium">
+            Creator
+          </div>
+        )}
+      </div>
+
       <div className="flex mt-3 ring-1 w-full ring-gray-600  p-3 rounded-md">
         <div className="flex gap-x-2 items-center">
           <div className="relative h-8 w-8">
@@ -77,7 +89,11 @@ const MarketSidebar = ({
         ))}
       </div>
       <div className="pt-3">
-        <div className="ring-1 ring-gray-700 rounded-xl p-3">
+        <div
+          className={`ring-1 ring-gray-700 rounded-xl p-3 ${
+            status === MarketStatus.LIVE && "bg-gray-900"
+          } `}
+        >
           {status === MarketStatus.LIVE && (
             <LiveMarket marketData={marketData!.data} />
           )}
@@ -104,7 +120,7 @@ const MarketSidebar = ({
         </div>
       </div>
     </Sidebar>
-  )
-}
+  );
+};
 
-export default MarketSidebar
+export default MarketSidebar;

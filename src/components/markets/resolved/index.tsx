@@ -45,6 +45,13 @@ const ResolvedMarket = ({ marketData }: { marketData: Market }) => {
           value={`${userEarnings?.toFixed(2) ?? 0} COMAI`}
         />
       </div>
+      <div className="mt-2 text-sm flex flex-row gap-x-3 ">
+        <MarketOutcomeCard
+          title="Creator Reward"
+          value={`${losePool*0.1?? 0} COMAI`}
+        />
+   
+      </div>
     </>
   )
 }

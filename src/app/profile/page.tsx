@@ -1,6 +1,7 @@
 "use client";
 import MarketCard from "@/components/card/market";
 import TabButton from "@/components/tabButton";
+import { usePolkadot } from "@/context";
 import {
   useGetMySelfMarketCreatedQuery,
   useGetMySelfMarketPredictedQuery,
@@ -49,6 +50,7 @@ const Profile = () => {
     setMarket(key);
     setPage(1);
   };
+  const {selectedAccount}=usePolkadot();
 
   return (
     <div>
@@ -97,6 +99,8 @@ const Profile = () => {
                   category={market.type}
                   totalVolume={market.pool_amount}
                   status={market.status}
+                  isMarketCreator={market.creator?.public_address ===selectedAccount?.address}
+
                 />
               ))}
             {(marketCreatedLoading ||
@@ -133,6 +137,8 @@ const Profile = () => {
                     category={market!.type}
                     totalVolume={market!.pool_amount}
                     status={market!.status}
+                    isMarketCreator={market.creator?.public_address ===selectedAccount?.address}
+
                   />
                 );
               })}

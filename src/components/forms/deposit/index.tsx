@@ -1,3 +1,4 @@
+import { DEPOSIT_WALLET } from "@/app/_lib/constants"
 import Button from "@/components/button"
 import { InputComponent } from "@/components/input"
 import { errorToast, successToast } from "@/components/toast"
@@ -14,9 +15,6 @@ const DepositForm = () => {
   const {
     register,
     handleSubmit,
-    control,
-    watch,
-    setValue,
     formState: { errors },
   } = useForm<IDepositForm>({
     mode: "all",
@@ -31,7 +29,7 @@ const DepositForm = () => {
     setIsDepositing(true)
     transfer({
       amount: String(data.amount),
-      to: "5G3nNt5W44KUnygyRVLHxxbkZCYyYSsUJAbZZuQ2SzNia5jF",
+      to: DEPOSIT_WALLET,
       callback(txHash) {
         if (!txHash) {
           errorToast("Deposit Transaction Failed")

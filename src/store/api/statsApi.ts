@@ -428,6 +428,30 @@ export const statsApi = createApi({
         return err.data;
       },
     }),
+    getRecentPredictions: builder.query<PaginatedApiResponse<Prediction>,{
+      marketId:string
+      page:string
+      count:string
+    }>({
+      query: ({ marketId, page, count }) => {
+        const url = `prediction/recent?marketId=${marketId}&page=${page}&count=${count}`;
+      
+        return {
+          method: "GET",
+          url: url,
+        };
+      },
+      providesTags: (_, __, { marketId }) => [
+        "GetMyTransactions",
+        { id: marketId, type: "GetMyTransactions" },
+      ],
+      transformResponse: (response: PaginatedApiResponse<Prediction>) => {
+        return response;
+      },
+      transformErrorResponse: (err) => {
+        return err.data;
+      },
+    }),
   }),
 });
 
@@ -444,6 +468,7 @@ export const {
   useLazyGetMarketsQuery,
   useGetLeaderboardQuery,
   useGetStatsQuery,
+  useGetRecentPredictionsQuery,
   useGetUserTransactionQuery,
   useCreateDisputeMutation,
   useGetMySelfMarketCreatedQuery,

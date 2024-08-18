@@ -1,3 +1,4 @@
+import { MIN_PREDICTION_AMOUNT } from "@/app/_lib/constants"
 import UserBalance from "@/components/balance/token"
 import Button from "@/components/button"
 import { InputComponent } from "@/components/input"
@@ -9,6 +10,7 @@ import {
   useGetMyDetailsQuery,
 } from "@/store/api/statsApi"
 import { Market, Outcome } from "@/types"
+import { predictPotentialEarning } from "@/utils"
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 
@@ -17,7 +19,7 @@ const CreatePredictionForm = ({ marketData }: { marketData: Market }) => {
     register,
     handleSubmit,
     control,
-
+    watch,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -52,8 +54,8 @@ const CreatePredictionForm = ({ marketData }: { marketData: Market }) => {
           register={register}
           errors={errors["amount"]}
           rules={{
-            required: "Amount is required",
-            min: { value: 1, message: "Amount must be greater than 0" },
+            required: "Bet Amount is required",
+            min: { value: MIN_PREDICTION_AMOUNT, message: `Bet amount must be greater than ${MIN_PREDICTION_AMOUNT}` },
             max: {
               value: userData?.tokens,
               message: "Amount cannot be more than your balance",
@@ -81,9 +83,9 @@ const CreatePredictionForm = ({ marketData }: { marketData: Market }) => {
           rules={{ required: "Outcome is required" }}
         />
       </div>
-      <p className="text-xs font-semibold mt-3 text-secondary">
-        Potential Earning:
-      </p>
+      {marketData && watch("outcome") && watch("amount") && <p className="text-xs font-semibold mt-3 text-secondary">
+        Potential Winnings: {predictPotentialEarning(marketData?.outcomes!,watch("outcome").value, watch("amount"))} COMAI
+      </p>}
       <div className="mt-4">
         <Button
           type="submit"

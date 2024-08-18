@@ -1,3 +1,4 @@
+import { DISPUTE_FEE } from "@/app/_lib/constants"
 import AmountWarning from "@/components/balance/message"
 import UserBalance from "@/components/balance/token"
 import Button from "@/components/button"
@@ -39,24 +40,6 @@ const DisputeForm = ({ marketId }: { marketId: string }) => {
       setIsDispute(false)
       errorToast((e as Error).message)
     }
-    // const response = await initWithdraw({
-    //   amount: data.amount.toString(),
-    // }).unwrap()
-    // if (response.data) {
-    //   const signature = await signMessage(response.data.message)
-    //   if (!signature) {
-    //     alert("Withdraw Error")
-    //     setIsWithdraw(false)
-    //     return
-    //   }
-    //   const completeResponse = await completeWithdraw({
-    //     signature: String(signature),
-    //   }).unwrap()
-    //   if (completeResponse.data) {
-    //     alert("Withdraw Success")
-    //   }
-    //   setIsWithdraw(false)
-    // }
   }
 
   return (
@@ -72,7 +55,7 @@ const DisputeForm = ({ marketId }: { marketId: string }) => {
       <div className="pb-2">
         <UserBalance />
       </div>
-      <AmountWarning amount="10" action="dispute" />
+      <AmountWarning amount={String(DISPUTE_FEE)} action="dispute" />
 
       <div className="mt-4">
         <Button type="submit" variant="primary" isLoading={isDispute}>
