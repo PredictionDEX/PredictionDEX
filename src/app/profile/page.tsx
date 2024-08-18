@@ -1,17 +1,17 @@
-"use client"
-import MarketCard from "@/components/card/market"
-import TabButton from "@/components/tabButton"
+"use client";
+import MarketCard from "@/components/card/market";
+import TabButton from "@/components/tabButton";
 import {
   useGetMySelfMarketCreatedQuery,
   useGetMySelfMarketPredictedQuery,
-} from "@/store/api/statsApi"
-import React, { useState } from "react"
-import { CgMediaLive } from "react-icons/cg"
-import useInfiniteScroll from "react-infinite-scroll-hook"
+} from "@/store/api/statsApi";
+import React, { useState } from "react";
+import { CgMediaLive } from "react-icons/cg";
+import useInfiniteScroll from "react-infinite-scroll-hook";
 
 const Profile = () => {
-  const [page, setPage] = useState(1)
-  const [market, setMarket] = useState<"prediction" | "created">("prediction")
+  const [page, setPage] = useState(1);
+  const [market, setMarket] = useState<"prediction" | "created">("prediction");
   const {
     data: myMarketCreated,
     isLoading: marketCreatedLoading,
@@ -19,7 +19,7 @@ const Profile = () => {
   } = useGetMySelfMarketCreatedQuery({
     page: String(page),
     count: "10",
-  })
+  });
   const {
     data: myMarketPredicted,
     isLoading: marketPredictedLoading,
@@ -27,28 +27,28 @@ const Profile = () => {
   } = useGetMySelfMarketPredictedQuery({
     page: String(page),
     count: "10",
-  })
+  });
   const hasNextPage =
     market === "created"
       ? myMarketCreated?.pagination.next
-      : myMarketPredicted?.pagination.next
-  const isLoading = marketCreatedLoading || marketPredictedLoading
-  const isError = marketCreatingError || marketPredictedError
+      : myMarketPredicted?.pagination.next;
+  const isLoading = marketCreatedLoading || marketPredictedLoading;
+  const isError = marketCreatingError || marketPredictedError;
   const [sentryRef] = useInfiniteScroll({
     loading: isLoading,
     hasNextPage: hasNextPage !== null,
     onLoadMore: () => {
-      console.log("Loading more")
-      setPage((prev) => prev + 1)
+      console.log("Loading more");
+      setPage((prev) => prev + 1);
     },
     disabled: isError,
     rootMargin: "0px 0px 20px 0px",
     delayInMs: 1000,
-  })
+  });
   const handleKeyChange = (key: "prediction" | "created") => {
-    setMarket(key)
-    setPage(1)
-  }
+    setMarket(key);
+    setPage(1);
+  };
 
   return (
     <div>
@@ -114,8 +114,8 @@ const Profile = () => {
                 <div className="text-center w-full mt-4">No markets found</div>
               )}
             {!marketPredictedLoading &&
-              myMarketPredicted?.data?.map(({ outcome }) => {
-                const { market } = outcome
+              myMarketPredicted?.data?.map((market) => {
+                // const { market } = outcome
                 return (
                   <MarketCard
                     key={market!.id}
@@ -134,7 +134,7 @@ const Profile = () => {
                     totalVolume={market!.pool_amount}
                     status={market!.status}
                   />
-                )
+                );
               })}
             {(marketPredictedLoading ||
               myMarketPredicted?.pagination?.next !== null) && (
@@ -146,7 +146,7 @@ const Profile = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;
