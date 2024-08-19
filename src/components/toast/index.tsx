@@ -9,7 +9,7 @@ interface ToastMessages {
 }
 
 const toastConfig: DefaultToastOptions = {
-  position: "bottom-left",
+  position: "top-center",
   style: {
     backgroundColor: "#1E293B",
     color: "#F9FAFB",

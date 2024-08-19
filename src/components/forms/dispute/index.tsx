@@ -1,15 +1,15 @@
-import { DISPUTE_FEE } from "@/app/_lib/constants"
-import AmountWarning from "@/components/balance/message"
-import UserBalance from "@/components/balance/token"
-import Button from "@/components/button"
-import { errorToast } from "@/components/toast"
-import { useCreateDisputeMutation } from "@/store/api/statsApi"
-import React from "react"
-import { useForm } from "react-hook-form"
-import { FaInfoCircle } from "react-icons/fa"
+import { DISPUTE_FEE } from "@/app/_lib/constants";
+import AmountWarning from "@/components/balance/message";
+import UserBalance from "@/components/balance/token";
+import Button from "@/components/button";
+import { errorToast, successToast } from "@/components/toast";
+import { useCreateDisputeMutation } from "@/store/api/statsApi";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { FaInfoCircle } from "react-icons/fa";
 
 interface IDisputeForm {
-  reason: string
+  reason: string;
 }
 const DisputeForm = ({ marketId }: { marketId: string }) => {
   const {
@@ -21,26 +21,24 @@ const DisputeForm = ({ marketId }: { marketId: string }) => {
     defaultValues: {
       reason: "",
     },
-  })
-  const [isDispute, setIsDispute] = React.useState(false)
-  const [createDispute] = useCreateDisputeMutation()
+  });
+  const [isDispute, setIsDispute] = React.useState(false);
+  const [createDispute] = useCreateDisputeMutation();
   const handleCreateDispute = async (data: IDisputeForm) => {
-    setIsDispute(true)
+    setIsDispute(true);
     try {
       const response = await createDispute({
         market_id: marketId,
         reason: data.reason,
-      }).unwrap()
-      setIsDispute(false)
-      if (response.data) {
-        alert("Dispute created successfully")
-      }
+      }).unwrap();
+      setIsDispute(false);
+      successToast("Dispute created successfully");
     } catch (e) {
-      console.log(e)
-      setIsDispute(false)
-      errorToast((e as Error).message)
+      console.log(e);
+      setIsDispute(false);
+      errorToast((e as Error).message);
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit(handleCreateDispute)}>
@@ -63,7 +61,7 @@ const DisputeForm = ({ marketId }: { marketId: string }) => {
         </Button>
       </div>
     </form>
-  )
-}
+  );
+};
 
-export default DisputeForm
+export default DisputeForm;

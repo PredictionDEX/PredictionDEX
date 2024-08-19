@@ -15,7 +15,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
         wsEndpoint={String(process.env.NEXT_PUBLIC_COMMUNE_API)}
       >
         <BalanceProvider>
-          <div className="min-h-screen">
+          <div className="min-h-screen text-white">
             <Navbar />
             <div className="container">{children}</div>
           </div>

@@ -1,6 +1,7 @@
 "use client"
 import MarketCard from "@/components/card/market"
 import TabButton from "@/components/tabButton"
+import { usePolkadot } from "@/context"
 import { useGetMarketsQuery } from "@/store/api/statsApi"
 import { MarketStatus } from "@/types/generic"
 import React, { useState } from "react"
@@ -9,7 +10,7 @@ import useInfiniteScroll from "react-infinite-scroll-hook"
 const History = () => {
   const [page, setPage] = useState(1)
   const [market, setMarket] = useState<MarketStatus>(MarketStatus.CLOSED)
-
+  const {selectedAccount}=usePolkadot();
   const {
     data: marketData,
     isLoading,
@@ -90,6 +91,8 @@ const History = () => {
               category={market.type}
               totalVolume={market.pool_amount}
               status={market.status}
+              isMarketCreator={selectedAccount?.address?market.creator?.public_address ===selectedAccount?.address:false}
+
             />
           ))}
         {(isLoading || marketData?.pagination?.next !== null) && (

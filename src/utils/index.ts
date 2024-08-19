@@ -78,7 +78,7 @@ const winPool=outcomes.find(outcome=>outcome.id===Number(outcomeId))?.total_amou
 const winPoolWithNewAmount=winPool+Number(outcomeAmount);
 const winPoolPercentage=Number(outcomeAmount)/winPoolWithNewAmount;
 
-return losePool*0.7*winPoolPercentage+Number(outcomeAmount);
+return (losePool*0.7*winPoolPercentage+Number(outcomeAmount)).toFixed(2);
   
 
 

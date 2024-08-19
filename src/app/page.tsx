@@ -109,7 +109,7 @@ export default function Home() {
                 category={market.type}
                 totalVolume={market.pool_amount}
                 status={market.status}
-                isMarketCreator={market.creator?.public_address ===selectedAccount?.address}
+                isMarketCreator={selectedAccount?.address?market.creator?.public_address ===selectedAccount?.address:false}
               />
             ))}
           {(marketLoading || marketsData?.pagination?.next !== null) && (
