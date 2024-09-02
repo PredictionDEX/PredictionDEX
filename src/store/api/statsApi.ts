@@ -2,6 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import apiWrapper from "@/store/api/wrapper/apiWrapper";
 import {
   ApiResponse,
+  IDistribution,
   IFundsManagement,
   LoginResponse,
   Market,
@@ -13,7 +14,11 @@ import {
   User,
   WithdrawInitResponse,
 } from "@/types";
-import { MarketStatus, TransactionType } from "@/types/generic";
+import {
+  MarketStatus,
+  TransactionType,
+  UserTransaction,
+} from "@/types/generic";
 export const statsApi = createApi({
   reducerPath: "statsApi",
   baseQuery: apiWrapper,
@@ -398,19 +403,25 @@ export const statsApi = createApi({
       },
     }),
     getUserTransaction: builder.query<
-      PaginatedApiResponse<IFundsManagement>,
+      PaginatedApiResponse<IFundsManagement | IDistribution>,
       {
-        status: TransactionType;
+        status: UserTransaction;
         page: string;
         count: string;
       }
     >({
       query: ({ status, page, count }) => {
         let url;
-        if (status === TransactionType.DEPOSIT) {
-          url = `user/deposits?page=${page}&count=${count}`;
-        } else {
-          url = `user/withdrawals?page=${page}&count=${count}`;
+        switch (status) {
+          case TransactionType.WITHDRAW:
+            url = `user/withdrawals?page=${page}&count=${count}`;
+            break;
+          case "DISTRIBUTION":
+            url = `distribution?page=${page}&count=${count}`;
+            break;
+          default:
+            url = `user/deposits?page=${page}&count=${count}`;
+            break;
         }
         return {
           method: "GET",
@@ -421,21 +432,26 @@ export const statsApi = createApi({
         "GetMyTransactions",
         { id: status, type: "GetMyTransactions" },
       ],
-      transformResponse: (response: PaginatedApiResponse<IFundsManagement>) => {
+      transformResponse: (
+        response: PaginatedApiResponse<IFundsManagement | IDistribution>
+      ) => {
         return response;
       },
       transformErrorResponse: (err) => {
         return err.data;
       },
     }),
-    getRecentPredictions: builder.query<PaginatedApiResponse<Prediction>,{
-      marketId:string
-      page:string
-      count:string
-    }>({
+    getRecentPredictions: builder.query<
+      PaginatedApiResponse<Prediction>,
+      {
+        marketId: string;
+        page: string;
+        count: string;
+      }
+    >({
       query: ({ marketId, page, count }) => {
         const url = `prediction/recent?marketId=${marketId}&page=${page}&count=${count}`;
-      
+
         return {
           method: "GET",
           url: url,
