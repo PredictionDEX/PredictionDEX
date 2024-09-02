@@ -1,23 +1,86 @@
 [
     {
         "id": 1,
-        "name": "E-Sports",
-        "label": "E-Sports",
-        "value": "E-Sports",
-        "image": "/category/esports.png"
+        "name": "Football",
+        "label": "Football",
+        "value": "Football",
+        "image": "/category/football.png"
     },
     {
         "id": 2,
+        "name": "Cricket",
+        "label": "Cricket",
+        "value": "Cricket",
+        "image": "/category/cricket.png"
+    },
+    {
+        "id": 3,
+        "name": "Baseball",
+        "label": "Baseball",
+        "value": "Baseball",
+        "image": "/category/baseball.png"
+    },
+    {
+        "id": 4,
+        "name": "American Football",
+        "label": "American Football",
+        "value": "American Football",
+        "image": "/category/american-football.png"
+    },
+    {
+        "id": 5,
+        "name": "Basketball",
+        "label": "Basketball",
+        "value": "Basketball",
+        "image": "/category/basketball.png"
+    },
+    {
+        "id": 6,
+        "name": "Ice Hockey",
+        "label": "Ice Hockey",
+        "value": "Ice Hockey",
+        "image": "/category/ice-hockey.png"
+    },
+    {
+        "id": 7,
         "name": "Crypto",
         "label": "Crypto",
         "value": "Crypto",
         "image": "/category/crypto.png"
     },
     {
-        "id": 3,
-        "name": "Election",
-        "label": "Election",
-        "value": "Election",
+        "id": 8,
+        "name": "Politics",
+        "label": "Politics",
+        "value": "Politics",
         "image": "/category/election.png"
+    },
+    {
+        "id": 9,
+        "name": "Science",
+        "label": "Science",
+        "value": "Science",
+        "image": "/category/science.png"
+    },
+    {
+        "id": 10,
+        "name": "E-Sports",
+        "label": "E-Sports",
+        "value": "E-Sports",
+        "image": "/category/esports.png"
+    },
+    {
+        "id": 11,
+        "name": "Commune",
+        "label": "Commune",
+        "value": "Commune",
+        "image": "/category/default-image.png"
+    },
+    {
+        "id": 12,
+        "name": "Project Bounty",
+        "label": "Project Bounty",
+        "value": "Project Bounty",
+        "image": "/category/project-bounty.png"
     }
 ]
