@@ -71,13 +71,6 @@
     },
     {
         "id": 11,
-        "name": "Commune",
-        "label": "Commune",
-        "value": "Commune",
-        "image": "/category/default-image.png"
-    },
-    {
-        "id": 12,
         "name": "Project Bounty",
         "label": "Project Bounty",
         "value": "Project Bounty",
