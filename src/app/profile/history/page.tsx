@@ -1,32 +1,35 @@
-"use client"
-import TabButton from "@/components/tabButton"
-import { useGetUserTransactionQuery } from "@/store/api/statsApi"
-import { TransactionType } from "@/types/generic"
-import React, { useState } from "react"
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa"
-import Moment from "react-moment"
+"use client";
+import TabButton from "@/components/tabButton";
+import { useGetUserTransactionQuery } from "@/store/api/statsApi";
+import { IDistribution, IFundsManagement } from "@/types";
+import { TransactionType, UserTransaction } from "@/types/generic";
+import React, { useState } from "react";
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import Moment from "react-moment";
 
 const TransactionHistory = () => {
-  const [page, setPage] = useState(1)
-  const [market, setMarket] = useState<TransactionType>(TransactionType.DEPOSIT)
+  const [page, setPage] = useState(1);
+  const [market, setMarket] = useState<UserTransaction>(
+    TransactionType.DEPOSIT
+  );
 
   const { data: userTransactions, isLoading } = useGetUserTransactionQuery({
     status: market,
     page: String(page),
     count: "10",
-  })
+  });
 
-  const handleKeyChange = (key: TransactionType) => {
-    setMarket(key)
-    setPage(1)
-  }
+  const handleKeyChange = (key: UserTransaction) => {
+    setMarket(key);
+    setPage(1);
+  };
   const handlePrevious = () => {
-    if (page > 1) setPage(page - 1)
-  }
-  const totalPages = userTransactions?.pagination.total_pages ?? 0
+    if (page > 1) setPage(page - 1);
+  };
+  const totalPages = userTransactions?.pagination.total_pages ?? 0;
   const handleNext = () => {
-    if (page < totalPages) setPage(page + 1)
-  }
+    if (page < totalPages) setPage(page + 1);
+  };
   return (
     <div>
       <div className="flex">
@@ -51,15 +54,30 @@ const TransactionHistory = () => {
           >
             Withdrawl
           </TabButton>
+          <TabButton
+            isActive={market === "DISTRIBUTION"}
+            handleChange={() => handleKeyChange("DISTRIBUTION")}
+          >
+            Transactions
+          </TabButton>
         </div>
         <table className="min-w-full  rounded-xl shadow-md overflow-scroll hide-scrollbar">
           <thead>
             <tr className=" text-white">
               <th className="py-3 px-6 text-left">S.N</th>
               <th className="py-3 px-6 text-left">Amount</th>
-              <th className="py-3 px-6 text-left hidden lg:block">
-                Transaction Hash
-              </th>
+              {market !== "DISTRIBUTION" && (
+                <th className="py-3 px-6 text-left hidden lg:block">
+                  Transaction Hash
+                </th>
+              )}
+              {market === "DISTRIBUTION" && (
+                <>
+                  <th className="py-3 px-6 text-left">Market</th>
+                  <th className="py-3 px-6 text-left">Type</th>
+                </>
+              )}
+
               <th className="py-3 px-6 text-left">Timestamp</th>
             </tr>
           </thead>
@@ -75,7 +93,22 @@ const TransactionHistory = () => {
                 <tr key={item.id} className="border-b border-gray-700">
                   <td className="py-3 px-6">{(page - 1) * 10 + index + 1}</td>
                   <td className="py-3 px-6">{item.amount} COMAI</td>
-                  <td className="py-3 px-6 hidden lg:block">{item.tx_hash}</td>
+                  {market !== "DISTRIBUTION" && (
+                    <td className="py-3 px-6 hidden lg:block">
+                      {(item as IFundsManagement).tx_hash}
+                    </td>
+                  )}
+                  {market === "DISTRIBUTION" && (
+                    <>
+                      <td className="py-3 px-6">
+                        {(item as IDistribution).market.title.slice(0, 20)}...
+                      </td>
+                      <td className="py-3 px-6">
+                        {(item as IDistribution).type}
+                      </td>
+                    </>
+                  )}
+
                   <td className="py-3 px-6">
                     <Moment format="YYYY/MM/DD HH:mm:ssA">
                       {item.created_at}
@@ -106,10 +139,8 @@ const TransactionHistory = () => {
           </button>
         </div>
       </div>
-
-   
     </div>
-  )
-}
+  );
+};
 
-export default TransactionHistory
+export default TransactionHistory;

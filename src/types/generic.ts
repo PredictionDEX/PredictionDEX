@@ -11,3 +11,5 @@ export enum TransactionType {
   DEPOSIT = "deposit",
   WITHDRAW = "withdraw",
 }
+
+export type UserTransaction = TransactionType | "DISTRIBUTION";
