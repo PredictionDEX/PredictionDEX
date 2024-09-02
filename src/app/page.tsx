@@ -1,22 +1,23 @@
-"use client"
+"use client";
 
-import { AiFillAccountBook } from "react-icons/ai"
-import { LuLayoutDashboard } from "react-icons/lu"
-import { FaGifts } from "react-icons/fa"
-import { FaUsers } from "react-icons/fa"
-import { IoBarChartSharp } from "react-icons/io5"
-import { CgMediaLive } from "react-icons/cg"
-import StatsCard from "@/components/card/stats"
-import MarketCard from "@/components/card/market"
-import { useGetMarketsQuery, useGetStatsQuery } from "@/store/api/statsApi"
-import { MarketStatus } from "@/types/generic"
-import useInfiniteScroll from "react-infinite-scroll-hook"
-import { useState } from "react"
-import { usePolkadot } from "@/context"
+import { AiFillAccountBook } from "react-icons/ai";
+import { LuLayoutDashboard } from "react-icons/lu";
+import { FaGifts } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa";
+import { IoBarChartSharp } from "react-icons/io5";
+import { CgMediaLive } from "react-icons/cg";
+import StatsCard from "@/components/card/stats";
+import MarketCard from "@/components/card/market";
+import { useGetMarketsQuery, useGetStatsQuery } from "@/store/api/statsApi";
+import { MarketStatus } from "@/types/generic";
+import useInfiniteScroll from "react-infinite-scroll-hook";
+import { useState } from "react";
+import { usePolkadot } from "@/context";
+import ComingSoon from "@/components/coming-soon";
 
 export default function Home() {
-  const [page, setPage] = useState(1)
-  const {selectedAccount}=usePolkadot();
+  const [page, setPage] = useState(1);
+  const { selectedAccount } = usePolkadot();
   const {
     data: marketsData,
     isLoading: marketLoading,
@@ -33,8 +34,8 @@ export default function Home() {
       refetchOnFocus: true,
       refetchOnReconnect: true,
       refetchOnMountOrArgChange: true,
-    },
-  )
+    }
+  );
   const { data: marketStats, isLoading: marketStatsLoading } = useGetStatsQuery(
     undefined,
     {
@@ -42,23 +43,24 @@ export default function Home() {
       refetchOnReconnect: true,
       skipPollingIfUnfocused: true,
       refetchOnMountOrArgChange: true,
-    },
-  )
+    }
+  );
 
   const [sentryRef] = useInfiniteScroll({
     loading: marketLoading,
     hasNextPage: marketsData?.pagination?.next !== null,
     onLoadMore: () => {
-      console.log("Loading more")
-      setPage((prev) => prev + 1)
+      console.log("Loading more");
+      setPage((prev) => prev + 1);
     },
     disabled: marketError,
     rootMargin: "0px 0px 20px 0px",
     delayInMs: 1000,
-  })
+  });
+  const futureDate = new Date("Tue Sep 03 2024 20:54:19 GMT+0545 (Nepal Time)");
   return (
     <div>
-      <div className="flex gap-4 py-5 px-3 flex-col md:flex-wrap md:flex-row md:px-0">
+      {/* <div className="flex gap-4 py-5 px-3 flex-col md:flex-wrap md:flex-row md:px-0">
         <StatsCard
           isLoading={marketStatsLoading}
           title="Total Volume"
@@ -118,7 +120,8 @@ export default function Home() {
             </div>
           )}
         </div>
-      </section>
+      </section> */}
+      <ComingSoon offset={futureDate} />
     </div>
-  )
+  );
 }
