@@ -60,68 +60,78 @@ export default function Home() {
   const futureDate = new Date("Tue Sep 03 2024 20:54:19 GMT+0545 (Nepal Time)");
   return (
     <div>
-      {/* <div className="flex gap-4 py-5 px-3 flex-col md:flex-wrap md:flex-row md:px-0">
-        <StatsCard
-          isLoading={marketStatsLoading}
-          title="Total Volume"
-          value={marketStats?.volume!}
-          icon={<AiFillAccountBook size={36} className="text-secondary" />}
-        />
-        <StatsCard
-          isLoading={marketStatsLoading}
-          title="Total Predictions"
-          value={marketStats?.predictions!}
-          icon={<LuLayoutDashboard size={36} className="text-secondary" />}
-        />
-        <StatsCard
-          isLoading={marketStatsLoading}
-          title="Total Rewards"
-          value={Number(marketStats?.rewards!.toFixed(2))}
-          icon={<FaGifts size={36} className="text-secondary" />}
-        />
-        <StatsCard
-          isLoading={marketStatsLoading}
-          title="Total Users"
-          value={marketStats?.users!}
-          icon={<FaUsers size={36} className="text-secondary" />}
-        />
-        <StatsCard
-          isLoading={marketStatsLoading}
-          title="Live Markets"
-          value={marketStats?.live_markets!}
-          icon={<IoBarChartSharp size={36} className="text-secondary" />}
-        />
-      </div>
-      <section>
-        <h1 className="text-xl py-2 font-semibold flex gap-x-2 items-center">
-          <CgMediaLive className="text-secondary animate-pulse" />
-          Trending Markets
-        </h1>
+      {process.env.NEXT_PUBLIC_MAINTENANCE === "true" ? (
+        <ComingSoon offset={futureDate} />
+      ) : (
+        <>
+          <div className="flex gap-4 py-5 px-3 flex-col md:flex-wrap md:flex-row md:px-0">
+            <StatsCard
+              isLoading={marketStatsLoading}
+              title="Total Volume"
+              value={marketStats?.volume!}
+              icon={<AiFillAccountBook size={36} className="text-secondary" />}
+            />
+            <StatsCard
+              isLoading={marketStatsLoading}
+              title="Total Predictions"
+              value={marketStats?.predictions!}
+              icon={<LuLayoutDashboard size={36} className="text-secondary" />}
+            />
+            <StatsCard
+              isLoading={marketStatsLoading}
+              title="Total Rewards"
+              value={Number(marketStats?.rewards!.toFixed(2))}
+              icon={<FaGifts size={36} className="text-secondary" />}
+            />
+            <StatsCard
+              isLoading={marketStatsLoading}
+              title="Total Users"
+              value={marketStats?.users!}
+              icon={<FaUsers size={36} className="text-secondary" />}
+            />
+            <StatsCard
+              isLoading={marketStatsLoading}
+              title="Live Markets"
+              value={marketStats?.live_markets!}
+              icon={<IoBarChartSharp size={36} className="text-secondary" />}
+            />
+          </div>
+          <section>
+            <h1 className="text-xl py-2 font-semibold flex gap-x-2 items-center">
+              <CgMediaLive className="text-secondary animate-pulse" />
+              Trending Markets
+            </h1>
 
-        <div className="flex flex-col md:flex-wrap md:flex-row">
-          {!marketLoading &&
-            marketsData?.data.map((market) => (
-              <MarketCard
-                key={market.id}
-                id={market.id}
-                image={`https://ecg.nyc3.digitaloceanspaces.com/${market.images[0]}`}
-                outcomes={market.outcomes}
-                name={market.title}
-                time={market.resolution_date}
-                category={market.type}
-                totalVolume={market.pool_amount}
-                status={market.status}
-                isMarketCreator={selectedAccount?.address?market.creator?.public_address ===selectedAccount?.address:false}
-              />
-            ))}
-          {(marketLoading || marketsData?.pagination?.next !== null) && (
-            <div ref={sentryRef} className="px-3">
-              Loading ...
+            <div className="flex flex-col md:flex-wrap md:flex-row">
+              {!marketLoading &&
+                marketsData?.data.map((market) => (
+                  <MarketCard
+                    key={market.id}
+                    id={market.id}
+                    image={`https://ecg.nyc3.digitaloceanspaces.com/${market.images[0]}`}
+                    outcomes={market.outcomes}
+                    name={market.title}
+                    time={market.resolution_date}
+                    category={market.type}
+                    totalVolume={market.pool_amount}
+                    status={market.status}
+                    isMarketCreator={
+                      selectedAccount?.address
+                        ? market.creator?.public_address ===
+                          selectedAccount?.address
+                        : false
+                    }
+                  />
+                ))}
+              {(marketLoading || marketsData?.pagination?.next !== null) && (
+                <div ref={sentryRef} className="px-3">
+                  Loading ...
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </section> */}
-      <ComingSoon offset={futureDate} />
+          </section>
+        </>
+      )}
     </div>
   );
 }

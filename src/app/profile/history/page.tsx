@@ -101,10 +101,11 @@ const TransactionHistory = () => {
                   {market === "DISTRIBUTION" && (
                     <>
                       <td className="py-3 px-6">
-                        {(item as IDistribution).market.title.slice(0, 20)}...
+                        {(item as IDistribution)?.market?.title?.slice(0, 20)}
+                        ...
                       </td>
                       <td className="py-3 px-6">
-                        {(item as IDistribution).type}
+                        {(item as IDistribution)?.type}
                       </td>
                     </>
                   )}
