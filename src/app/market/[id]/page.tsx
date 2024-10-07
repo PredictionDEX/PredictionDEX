@@ -4,11 +4,14 @@ import MarketCard from "@/components/card/market";
 import StatsCard from "@/components/card/stats";
 import TableComponent from "@/components/table";
 import { usePolkadot } from "@/context";
-import { useGetMarketByIdQuery, useGetRecentPredictionsQuery } from "@/store/api/statsApi";
+import {
+  useGetMarketByIdQuery,
+  useGetRecentPredictionsQuery,
+} from "@/store/api/statsApi";
 import { highestPrediction } from "@/utils";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import {  FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 import { FaMedal } from "react-icons/fa";
 import Moment from "react-moment";
 
@@ -27,11 +30,12 @@ const InvidiualMarketCard = ({
       skip: !marketId,
     }
   );
-  const {data:marketPredictions,isLoading:marketLoading}=useGetRecentPredictionsQuery({ 
-    marketId: marketId,
-    page: String(page),
-    count: "10",
-  });
+  const { data: marketPredictions, isLoading: marketLoading } =
+    useGetRecentPredictionsQuery({
+      marketId: marketId,
+      page: String(page),
+      count: "10",
+    });
   const handlePrevious = () => {
     if (page > 1) setPage(page - 1);
   };
@@ -40,10 +44,10 @@ const InvidiualMarketCard = ({
     if (page < totalPages) setPage(page + 1);
   };
   const router = useRouter();
-  const {selectedAccount}=usePolkadot();
+  const { selectedAccount } = usePolkadot();
   return (
-    <div className="flex gap-x-3">
-      <div className="w-[70%]">
+    <div className="flex flex-col md:flex-row gap-x-3">
+      <div className="w-[100%] md:w-[70%]">
         <div className="mb-2 mt-4">
           <button
             className="ring-1 ring-gray-400 p-2 rounded-xl cursor-pointer"
@@ -65,7 +69,10 @@ const InvidiualMarketCard = ({
             status={marketData.data.status}
             isFullWidth
             isClickable={false}
-            isMarketCreator={selectedAccount?.address === marketData.data.creator?.public_address}
+            isMarketCreator={
+              selectedAccount?.address ===
+              marketData.data.creator?.public_address
+            }
           />
         )}
         {!isLoading && (
@@ -96,19 +103,15 @@ const InvidiualMarketCard = ({
             tableHeadings={["Outcome", "Amount", "Timestamp"]}
             isLoading={marketLoading}
             page={page}
-            tableBody={
-                marketPredictions?.data.map((item, index) => (
-                <tr key={item.id} className="text-sm">
-                  <td className="py-1 px-6">{item.outcome.label}</td>
-                  <td className="py-1 px-6">{item.amount} COMAI</td>
-                  <td className="py-1 px-6">
-                    <Moment  fromNow>
-                      {item.created_at}
-                    </Moment>
-                  </td>
-                </tr>
-              ))
-            }
+            tableBody={marketPredictions?.data.map((item, index) => (
+              <tr key={item.id} className="text-sm">
+                <td className="py-1 px-6">{item.outcome.label}</td>
+                <td className="py-1 px-6">{item.amount} COMAI</td>
+                <td className="py-1 px-6">
+                  <Moment fromNow>{item.created_at}</Moment>
+                </td>
+              </tr>
+            ))}
             totalPages={10}
           />
         </div>
